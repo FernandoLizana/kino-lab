@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Modelos · Kino Lab{% endblock %}
+{% block content %}
+<h1 class="h3">Fichas de modelos</h1>
+{% for c in cards %}
+<div class="card p-3 mb-3">
+  <h2 class="h6">{{ c.name }} {% if not c.available %}<span class="badge text-bg-secondary">no disponible</span>{% endif %}</h2>
+  <dl class="row small mb-0">
+    <dt class="col-sm-3">Objetivo</dt><dd class="col-sm-9">{{ c.objective }}</dd>
+    <dt class="col-sm-3">Entradas</dt><dd class="col-sm-9">{{ c.inputs }}</dd>
+    <dt class="col-sm-3">Entrenamiento</dt><dd class="col-sm-9">{{ c.training }}</dd>
+    <dt class="col-sm-3">Tipo de salida</dt><dd class="col-sm-9">{{ c.output_type }}</dd>
+    <dt class="col-sm-3">No es</dt><dd class="col-sm-9">{{ c.not }}</dd>
+    <dt class="col-sm-3">Referencia</dt><dd class="col-sm-9">{{ c.baseline }}</dd>
+    <dt class="col-sm-3">Límites</dt><dd class="col-sm-9">{{ c.limitations }}</dd>
+  </dl>
+</div>
+{% endfor %}
+{% endblock %}

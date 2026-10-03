@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}{{ game.name }} — Otras loterías{% endblock %}
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb mb-0">
+    <li class="breadcrumb-item"><a href="{{ url_for('lotteries.catalog') }}">Otras loterías</a></li>
+    <li class="breadcrumb-item active">{{ game.name }}</li>
+  </ol>
+</nav>
+
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+  <div>
+    <h1 class="h3 mb-1">{{ game.name }}</h1>
+    <p class="text-secondary mb-0">{{ game.country }} · {{ rules_summary }}</p>
+  </div>
+  <div class="d-flex flex-wrap gap-2">
+    <a class="btn btn-outline-info" href="{{ url_for('lotteries.analysis', slug=game.slug) }}">Análisis</a>
+    <a class="btn btn-outline-secondary" href="{{ url_for('lotteries.sample_csv', slug=game.slug) }}">Plantilla CSV</a>
+    {% if draw_count > 0 %}
+    <a class="btn btn-outline-light" href="{{ url_for('lotteries.export_csv', slug=game.slug) }}">Export CSV</a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="alert alert-secondary border-0" role="alert">{{ lottery_disclaimer }}</div>
+
+<div class="row g-4">
+  <div class="col-lg-5">
+    <h2 class="h5">Reglas</h2>
+    <ul class="list-unstyled small">
+      <li><strong>Principales:</strong>
+        {{ rules.main.count }} de {{ rules.main.min }}–{{ rules.main.max }}
+        ({{ rules.main.name }})
+      </li>
+      {% for b in rules.bonus %}
+      <li><strong>{{ b.name }}:</strong> {{ b.count }} de {{ b.min }}–{{ b.max }}
+        <span class="text-secondary">(pool: {{ b.pool }})</span>
+      </li>
+      {% endfor %}
+      <li><strong>Días:</strong> {{ rules.draw_days | join(', ') }}</li>
+      <li><strong>Moneda:</strong> {{ rules.currency }}</li>
+      <li><strong>Vigencia reglas:</strong> {{ rules.rules_effective }}
+        <span class="text-secondary">(verificado {{ rules.rules_verified }})</span>
+      </li>
+    </ul>
+    <p class="small">{{ rules.notes }}</p>
+    <div class="d-flex flex-wrap gap-2 mb-4">
+      {% if game.official_url %}
+      <a class="btn btn-sm btn-outline-primary" href="{{ game.official_url }}" target="_blank" rel="noopener">Sitio oficial</a>
+      {% endif %}
+      {% if game.history_url %}
+      <a class="btn btn-sm btn-outline-secondary" href="{{ game.history_url }}" target="_blank" rel="noopener">Fuente histórica</a>
+      {% endif %}
+    </div>
+
+    <h2 class="h5">Datos locales</h2>
+    <p class="small text-secondary">{{ draw_count }} sorteos · {{ sync_message }}</p>
+
+    <form class="border border-secondary rounded-3 p-3 mb-3" method="post" action="{{ url_for('lotteries.upload', slug=game.slug) }}" enctype="multipart/form-data">
+      <label class="form-label">Cargar CSV</label>
+      <input class="form-control form-control-sm mb-2" type="file" name="file" accept=".csv" required>
+      <div class="form-check mb-2">
+        <input class="form-check-input" type="checkbox" name="replace" id="replace">
+        <label class="form-check-label small" for="replace">Reemplazar dataset local</label>
+      </div>
+      <button class="btn btn-sm btn-primary" type="submit">Importar</button>
+    </form>
+
+    {% if game.sync_adapter %}
+    <form class="border border-success rounded-3 p-3 mb-3" method="post" action="{{ url_for('lotteries.sync', slug=game.slug) }}">
+      <div class="small mb-2">Sync opt-in: {{ sync_info.label if sync_info else game.sync_adapter }}</div>
+      <input type="hidden" name="limit" value="2000">
+      <button class="btn btn-sm btn-success" type="submit">Sincronizar desde API</button>
+    </form>
+    {% endif %}
+  </div>
+
+  <div class="col-lg-7">
+    <h2 class="h5">Últimos sorteos</h2>
+    {% if draws %}
+    <div class="table-responsive">
+      <table class="table table-sm table-dark align-middle">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Principales</th>
+            <th>Bonus</th>
+            <th>Fuente</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for d in draws %}
+          <tr>
+            <td>{{ d.draw_date.isoformat() }}</td>
+            <td class="font-monospace">{{ d.main() | join(' ') }}</td>
+            <td class="font-monospace">{{ d.bonus() | join(' ') }}</td>
+            <td class="small">{{ d.source }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="text-secondary">Sin sorteos locales. Carga un CSV{% if game.sync_adapter %} o usa sync{% endif %}.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Ajustes · Kino Lab{% endblock %}
+{% block content %}
+<h1 class="h3">Uso local y privacidad</h1>
+<p>Datos en <code>data/</code>. Sin telemetría. El servidor escucha en 127.0.0.1.</p>
+<form method="post" class="mb-3">
+  <input type="hidden" name="action" value="backup">
+  <button class="btn btn-primary" type="submit">Descargar respaldo</button>
+</form>
+<form method="post" enctype="multipart/form-data" class="mb-3">
+  <input type="hidden" name="action" value="restore">
+  <input class="form-control" type="file" name="file" accept=".zip" required>
+  <button class="btn btn-outline-light mt-2" type="submit">Restaurar</button>
+</form>
+<form method="post" class="mb-3" onsubmit="return confirm('¿Borrar sorteos, imports, favoritos y cuaderno locales?')">
+  <input type="hidden" name="action" value="wipe">
+  <button class="btn btn-outline-danger" type="submit">Borrar datos del laboratorio</button>
+</form>
+<h2 class="h6">Copiar perfil</h2>
+<form method="post" class="row g-2">
+  <input type="hidden" name="action" value="copy_profile">
+  <div class="col-md-3"><select class="form-select" name="source">{% for p in profiles %}<option value="{{ p.slug }}">{{ p.slug }}</option>{% endfor %}</select></div>
+  <div class="col-md-3"><input class="form-control" name="new_slug" placeholder="mi_kino"></div>
+  <div class="col-md-3"><input class="form-control" name="new_name" placeholder="Mi copia"></div>
+  <div class="col-md-3"><button class="btn btn-outline-light" type="submit">Duplicar</button></div>
+</form>
+{% endblock %}

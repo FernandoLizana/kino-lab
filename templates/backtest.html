@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% from "_weights.html" import weights_fields %}
+{% block title %}Backtesting · Kino Lab{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Backtesting walk-forward</h1>
+<p class="text-secondary">
+  Para cada sorteo se usan <em>solo</em> los anteriores. Se puntúan combinaciones,
+  se toman las mejores y se comparan con el sorteo siguiente frente a un baseline aleatorio.
+</p>
+<div class="card p-4">
+  <form method="post">
+    <div class="row g-3 mb-3">
+      <div class="col-md-3">
+        <label class="form-label">Sample por paso</label>
+        <input class="form-control" type="number" name="sample_size" value="2000" min="200" max="20000">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Top K</label>
+        <input class="form-control" type="number" name="top_k" value="5" min="1" max="20">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Semilla</label>
+        <input class="form-control" type="number" name="seed" value="42">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Historial mínimo</label>
+        <input class="form-control" type="number" name="min_history" value="50" min="20">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Máx. pasos</label>
+        <input class="form-control" type="number" name="max_steps" value="15" min="5" max="100">
+      </div>
+    </div>
+    <h2 class="h6">Pesos</h2>
+    {{ weights_fields(default_weights) }}
+    <button class="btn btn-primary" type="submit">Ejecutar backtesting</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% from "_weights.html" import weights_fields %}
+{% block title %}Portafolio · Kino Lab{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Optimizador de tickets</h1>
+<div class="card p-4">
+  <form method="post">
+    <div class="row g-3 mb-3">
+      <div class="col-md-3">
+        <label class="form-label">Cantidad de tickets</label>
+        <input class="form-control" type="number" name="ticket_count" value="5" min="1" max="50" required>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Combinaciones a explorar</label>
+        <input class="form-control" type="number" name="sample_size" value="20000" min="500" max="200000">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Máx. números compartidos</label>
+        <input class="form-control" type="number" name="max_overlap" value="9" min="0" max="13">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Semilla</label>
+        <input class="form-control" type="number" name="seed" value="42">
+      </div>
+    </div>
+    <h2 class="h6">Pesos</h2>
+    {{ weights_fields(default_weights) }}
+    <button class="btn btn-primary" type="submit">Generar portafolio</button>
+  </form>
+</div>
+{% endblock %}

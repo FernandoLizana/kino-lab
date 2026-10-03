@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}{{ doc.title }} · Kino Lab{% endblock %}
+{% block content %}
+<h1 class="h4">{{ doc.title }}</h1>
+<p class="small text-secondary">id experimento {{ doc.experiment_id }} · motor {{ doc.engine }} · commit {{ doc.git.commit or "—" }}</p>
+<form method="post" class="card p-3 mb-3">
+  <input type="hidden" name="action" value="save">
+  <div class="mb-2"><label class="form-label">Título</label><input class="form-control" name="title" value="{{ doc.title }}"></div>
+  <div class="mb-2"><label class="form-label">Pregunta</label><textarea class="form-control" name="question" rows="2">{{ doc.question }}</textarea></div>
+  <div class="mb-2"><label class="form-label">Notas personales</label><textarea class="form-control" name="notes" rows="3">{{ doc.notes }}</textarea></div>
+  <div class="mb-2"><label class="form-label">Conclusión personal (no es del motor)</label><textarea class="form-control" name="conclusion" rows="2">{{ doc.conclusion }}</textarea></div>
+  <button class="btn btn-primary" type="submit">Guardar</button>
+</form>
+<form method="post" class="d-inline">
+  <input type="hidden" name="action" value="run_prob">
+  <button class="btn btn-outline-info" type="submit">Añadir ejecución: probabilidades</button>
+</form>
+<form method="post" class="d-inline">
+  <input type="hidden" name="action" value="duplicate">
+  <button class="btn btn-outline-light" type="submit">Duplicar</button>
+</form>
+<a class="btn btn-outline-light" href="{{ url_for('lab.export_json', experiment_id=doc.experiment_id) }}">JSON</a>
+<a class="btn btn-outline-light" href="{{ url_for('lab.export_pdf', experiment_id=doc.experiment_id) }}">PDF</a>
+<form method="post" class="d-inline" onsubmit="return confirm('¿Archivar?')">
+  <input type="hidden" name="action" value="archive"><button class="btn btn-outline-warning" type="submit">Archivar</button>
+</form>
+<form method="post" class="d-inline" onsubmit="return confirm('¿Eliminar este experimento?')">
+  <input type="hidden" name="action" value="delete"><button class="btn btn-outline-danger" type="submit">Eliminar</button>
+</form>
+<h2 class="h6 mt-4">Ejecuciones (no se sobrescriben)</h2>
+{% for run in doc.runs %}
+<div class="card p-2 mb-2 small">
+  <strong>{{ run.run_id }}</strong> · {{ run.kind }} · {{ run.status }} · {{ run.started_at }}
+</div>
+{% else %}
+<p class="text-secondary">Sin ejecuciones. Lanza el cálculo teórico para crear la primera.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,1530 @@
+{
+  "dataset": {
+    "draws": 2456,
+    "first_draw": "2006-01-08",
+    "last_draw": "2026-07-17",
+    "numeric_features": 122,
+    "categorical_features": 34,
+    "pool_size": 25,
+    "draw_size": 14,
+    "base_rate": 0.56
+  },
+  "statistical_resolution": {
+    "note": "min_detectable_lift_pp = cuánto tendría que subir la tasa de aparición de un número (desde 56%) para detectarse con 80% de potencia tras corregir por el número de celdas probadas.",
+    "base_rate_pct": 56.0,
+    "variables": [
+      {
+        "variable": "lunar_phase_dir",
+        "distinct_values": 2,
+        "median_draws_per_value": 1228.0,
+        "min_draws_per_value": 1226,
+        "cells_tested": 50,
+        "min_detectable_lift_pp": 5.85,
+        "equivalent_forcing_strength": 0.133
+      },
+      {
+        "variable": "saturn_speed_bin",
+        "distinct_values": 2,
+        "median_draws_per_value": 1228.0,
+        "min_draws_per_value": 808,
+        "cells_tested": 50,
+        "min_detectable_lift_pp": 5.85,
+        "equivalent_forcing_strength": 0.133
+      },
+      {
+        "variable": "sun_speed_bin",
+        "distinct_values": 2,
+        "median_draws_per_value": 1228.0,
+        "min_draws_per_value": 853,
+        "cells_tested": 50,
+        "min_detectable_lift_pp": 5.85,
+        "equivalent_forcing_strength": 0.133
+      },
+      {
+        "variable": "uranus_motion",
+        "distinct_values": 2,
+        "median_draws_per_value": 1228.0,
+        "min_draws_per_value": 500,
+        "cells_tested": 50,
+        "min_detectable_lift_pp": 5.85,
+        "equivalent_forcing_strength": 0.133
+      },
+      {
+        "variable": "calendar_weekday",
+        "distinct_values": 3,
+        "median_draws_per_value": 1053.0,
+        "min_draws_per_value": 332,
+        "cells_tested": 75,
+        "min_detectable_lift_pp": 6.49,
+        "equivalent_forcing_strength": 0.148
+      },
+      {
+        "variable": "moon_declination_bin",
+        "distinct_values": 3,
+        "median_draws_per_value": 955.0,
+        "min_draws_per_value": 541,
+        "cells_tested": 75,
+        "min_detectable_lift_pp": 6.82,
+        "equivalent_forcing_strength": 0.155
+      },
+      {
+        "variable": "saturn_motion",
+        "distinct_values": 3,
+        "median_draws_per_value": 808.0,
+        "min_draws_per_value": 477,
+        "cells_tested": 75,
+        "min_detectable_lift_pp": 7.41,
+        "equivalent_forcing_strength": 0.168
+      },
+      {
+        "variable": "jupiter_speed_bin",
+        "distinct_values": 3,
+        "median_draws_per_value": 647.0,
+        "min_draws_per_value": 391,
+        "cells_tested": 75,
+        "min_detectable_lift_pp": 8.28,
+        "equivalent_forcing_strength": 0.188
+      },
+      {
+        "variable": "lunar_mars_sep_bin",
+        "distinct_values": 4,
+        "median_draws_per_value": 618.5,
+        "min_draws_per_value": 398,
+        "cells_tested": 100,
+        "min_detectable_lift_pp": 8.63,
+        "equivalent_forcing_strength": 0.196
+      },
+      {
+        "variable": "lunar_illumination_bin",
+        "distinct_values": 4,
+        "median_draws_per_value": 615.5,
+        "min_draws_per_value": 408,
+        "cells_tested": 100,
+        "min_detectable_lift_pp": 8.65,
+        "equivalent_forcing_strength": 0.197
+      },
+      {
+        "variable": "lunar_venus_sep_bin",
+        "distinct_values": 4,
+        "median_draws_per_value": 615.0,
+        "min_draws_per_value": 403,
+        "cells_tested": 100,
+        "min_detectable_lift_pp": 8.65,
+        "equivalent_forcing_strength": 0.197
+      },
+      {
+        "variable": "lunar_sun_sep_bin",
+        "distinct_values": 4,
+        "median_draws_per_value": 613.0,
+        "min_draws_per_value": 403,
+        "cells_tested": 100,
+        "min_detectable_lift_pp": 8.67,
+        "equivalent_forcing_strength": 0.197
+      },
+      {
+        "variable": "lunar_mercury_sep_bin",
+        "distinct_values": 4,
+        "median_draws_per_value": 609.0,
+        "min_draws_per_value": 405,
+        "cells_tested": 100,
+        "min_detectable_lift_pp": 8.69,
+        "equivalent_forcing_strength": 0.198
+      },
+      {
+        "variable": "lunar_jupiter_sep_bin",
+        "distinct_values": 4,
+        "median_draws_per_value": 608.0,
+        "min_draws_per_value": 388,
+        "cells_tested": 100,
+        "min_detectable_lift_pp": 8.7,
+        "equivalent_forcing_strength": 0.198
+      },
+      {
+        "variable": "lunar_true_node_quad",
+        "distinct_values": 4,
+        "median_draws_per_value": 607.5,
+        "min_draws_per_value": 476,
+        "cells_tested": 100,
+        "min_detectable_lift_pp": 8.71,
+        "equivalent_forcing_strength": 0.198
+      },
+      {
+        "variable": "lunar_mean_node_quad",
+        "distinct_values": 4,
+        "median_draws_per_value": 606.0,
+        "min_draws_per_value": 486,
+        "cells_tested": 100,
+        "min_detectable_lift_pp": 8.72,
+        "equivalent_forcing_strength": 0.198
+      },
+      {
+        "variable": "jupiter_motion",
+        "distinct_values": 3,
+        "median_draws_per_value": 554.0,
+        "min_draws_per_value": 391,
+        "cells_tested": 75,
+        "min_detectable_lift_pp": 8.95,
+        "equivalent_forcing_strength": 0.203
+      },
+      {
+        "variable": "mercury_motion",
+        "distinct_values": 3,
+        "median_draws_per_value": 451.0,
+        "min_draws_per_value": 42,
+        "cells_tested": 75,
+        "min_detectable_lift_pp": 9.92,
+        "equivalent_forcing_strength": 0.225
+      },
+      {
+        "variable": "mercury_speed_bin",
+        "distinct_values": 4,
+        "median_draws_per_value": 404.0,
+        "min_draws_per_value": 42,
+        "cells_tested": 100,
+        "min_detectable_lift_pp": 10.67,
+        "equivalent_forcing_strength": 0.243
+      },
+      {
+        "variable": "lunar_nearest_lunation_bin",
+        "distinct_values": 3,
+        "median_draws_per_value": 354.0,
+        "min_draws_per_value": 340,
+        "cells_tested": 75,
+        "min_detectable_lift_pp": 11.2,
+        "equivalent_forcing_strength": 0.255
+      },
+      {
+        "variable": "venus_speed_bin",
+        "distinct_values": 4,
+        "median_draws_per_value": 291.5,
+        "min_draws_per_value": 16,
+        "cells_tested": 100,
+        "min_detectable_lift_pp": 12.57,
+        "equivalent_forcing_strength": 0.286
+      },
+      {
+        "variable": "lunar_phase_octile",
+        "distinct_values": 8,
+        "median_draws_per_value": 306.0,
+        "min_draws_per_value": 300,
+        "cells_tested": 200,
+        "min_detectable_lift_pp": 12.78,
+        "equivalent_forcing_strength": 0.29
+      },
+      {
+        "variable": "mars_motion",
+        "distinct_values": 3,
+        "median_draws_per_value": 201.0,
+        "min_draws_per_value": 44,
+        "cells_tested": 75,
+        "min_detectable_lift_pp": 14.86,
+        "equivalent_forcing_strength": 0.338
+      },
+      {
+        "variable": "calendar_month",
+        "distinct_values": 12,
+        "median_draws_per_value": 205.5,
+        "min_draws_per_value": 189,
+        "cells_tested": 300,
+        "min_detectable_lift_pp": 15.95,
+        "equivalent_forcing_strength": 0.363
+      },
+      {
+        "variable": "lunar_zodiac_sign",
+        "distinct_values": 12,
+        "median_draws_per_value": 205.0,
+        "min_draws_per_value": 194,
+        "cells_tested": 300,
+        "min_detectable_lift_pp": 15.97,
+        "equivalent_forcing_strength": 0.363
+      },
+      {
+        "variable": "venus_motion",
+        "distinct_values": 3,
+        "median_draws_per_value": 164.0,
+        "min_draws_per_value": 16,
+        "cells_tested": 75,
+        "min_detectable_lift_pp": 16.45,
+        "equivalent_forcing_strength": 0.374
+      },
+      {
+        "variable": "mars_speed_bin",
+        "distinct_values": 3,
+        "median_draws_per_value": 151.0,
+        "min_draws_per_value": 44,
+        "cells_tested": 75,
+        "min_detectable_lift_pp": 17.15,
+        "equivalent_forcing_strength": 0.39
+      },
+      {
+        "variable": "lunar_sector25",
+        "distinct_values": 25,
+        "median_draws_per_value": 99.0,
+        "min_draws_per_value": 91,
+        "cells_tested": 625,
+        "min_detectable_lift_pp": 23.88,
+        "equivalent_forcing_strength": 0.543
+      },
+      {
+        "variable": "lunar_apsis",
+        "distinct_values": 3,
+        "median_draws_per_value": 44.0,
+        "min_draws_per_value": 24,
+        "cells_tested": 75,
+        "min_detectable_lift_pp": 31.76,
+        "equivalent_forcing_strength": 0.722
+      }
+    ]
+  },
+  "marginal_associations": {
+    "tests_run": 3050,
+    "discoveries_fdr05": 0,
+    "null_discoveries_mean": 0.135,
+    "null_discoveries_p95": 1.0,
+    "max_abs_correlation": 0.07832,
+    "null_max_abs_correlation_mean": 0.07227,
+    "max_correlation_p_value": 0.18407960199004975,
+    "strongest_pairs": [
+      {
+        "feature": "lunar.hours_to_nearest_full_moon_signed_norm",
+        "number": 7,
+        "r": -0.07832,
+        "p_value": 0.00010221323250564202
+      },
+      {
+        "feature": "lunar.hours_to_nearest_new_moon_signed_norm",
+        "number": 7,
+        "r": -0.07723,
+        "p_value": 0.00012748080352876882
+      },
+      {
+        "feature": "lunar.sep_mercury_cos",
+        "number": 23,
+        "r": 0.07572,
+        "p_value": 0.00017253694468941924
+      },
+      {
+        "feature": "lunar.sep_mercury_norm",
+        "number": 23,
+        "r": -0.07467,
+        "p_value": 0.0002124550455706505
+      },
+      {
+        "feature": "lunar.sep_pluto_norm",
+        "number": 2,
+        "r": 0.0734,
+        "p_value": 0.00027184237947412
+      },
+      {
+        "feature": "lunar.sep_pluto_cos",
+        "number": 2,
+        "r": -0.07316,
+        "p_value": 0.0002849934569141596
+      },
+      {
+        "feature": "lunar.phase_cos",
+        "number": 23,
+        "r": 0.07245,
+        "p_value": 0.00032655837431028254
+      },
+      {
+        "feature": "lunar.sep_sun_cos",
+        "number": 23,
+        "r": 0.07245,
+        "p_value": 0.00032655864798820315
+      },
+      {
+        "feature": "lunar.illumination_norm",
+        "number": 23,
+        "r": -0.07245,
+        "p_value": 0.00032656038643924485
+      },
+      {
+        "feature": "lunar.sep_sun_norm",
+        "number": 23,
+        "r": -0.07185,
+        "p_value": 0.00036598666207864137
+      }
+    ]
+  },
+  "categorical_associations": {
+    "strongest_bin_association": {
+      "bin_variable": "lunar_sector25",
+      "number": 12,
+      "chi2": 40.351,
+      "df": 24,
+      "nominal_p": 0.019602598655417473
+    },
+    "permutation_p_value": 0.27722772277227725,
+    "null_max_chi2_mean": 38.506,
+    "null_max_chi2_p95": 49.424
+  },
+  "walk_forward_summary": {
+    "n_steps": 2056,
+    "n_strategies": 71,
+    "permutations": 2000,
+    "best_strategy": "astro_channel_venus_longitude",
+    "best_auc": 0.50614,
+    "null_max_auc_mean": 0.51,
+    "null_max_auc_p95": 0.51263,
+    "best_p_value_family_wise": 0.9975012493753124,
+    "strategies_significant_fwer05": 0
+  },
+  "walk_forward_strategies": [
+    {
+      "strategy": "astro_channel_venus_longitude",
+      "family": "astro_channel",
+      "auc": 0.50614,
+      "auc_minus_half": 0.00614,
+      "top14_hits": 7.8969,
+      "top14_hits_vs_expected": 0.0569,
+      "null_auc_mean": 0.50533,
+      "auc_minus_null_mean": 0.00081,
+      "null_auc_sd": 0.00221,
+      "p_value_raw": 0.3548225887056472,
+      "p_value_family_wise": 0.9975012493753124
+    },
+    {
+      "strategy": "stat_frequency_w100",
+      "family": "statistical",
+      "auc": 0.5052,
+      "auc_minus_half": 0.0052,
+      "top14_hits": 7.909,
+      "top14_hits_vs_expected": 0.069,
+      "null_auc_mean": 0.50369,
+      "auc_minus_null_mean": 0.00151,
+      "null_auc_sd": 0.00255,
+      "p_value_raw": 0.28735632183908044,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "bin_lunar_phase_octile",
+      "family": "astro_bin",
+      "auc": 0.50515,
+      "auc_minus_half": 0.00515,
+      "top14_hits": 7.875,
+      "top14_hits_vs_expected": 0.035,
+      "null_auc_mean": 0.50261,
+      "auc_minus_null_mean": 0.00254,
+      "null_auc_sd": 0.0026,
+      "p_value_raw": 0.1629185407296352,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "astro_channel_lunations",
+      "family": "astro_channel",
+      "auc": 0.50413,
+      "auc_minus_half": 0.00413,
+      "top14_hits": 7.8633,
+      "top14_hits_vs_expected": 0.0233,
+      "null_auc_mean": 0.5056,
+      "auc_minus_null_mean": -0.00147,
+      "null_auc_sd": 0.00222,
+      "p_value_raw": 0.7606196901549226,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "stat_ewma_h30",
+      "family": "statistical",
+      "auc": 0.50412,
+      "auc_minus_half": 0.00412,
+      "top14_hits": 7.8731,
+      "top14_hits_vs_expected": 0.0331,
+      "null_auc_mean": 0.50339,
+      "auc_minus_null_mean": 0.00072,
+      "null_auc_sd": 0.00252,
+      "p_value_raw": 0.3938030984507746,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "bin_lunar_jupiter_sep_bin",
+      "family": "astro_bin",
+      "auc": 0.50411,
+      "auc_minus_half": 0.00411,
+      "top14_hits": 7.876,
+      "top14_hits_vs_expected": 0.036,
+      "null_auc_mean": 0.50405,
+      "auc_minus_null_mean": 6e-05,
+      "null_auc_sd": 0.00231,
+      "p_value_raw": 0.487256371814093,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "stat_gap_hot",
+      "family": "statistical",
+      "auc": 0.50403,
+      "auc_minus_half": 0.00403,
+      "top14_hits": 7.8857,
+      "top14_hits_vs_expected": 0.0457,
+      "null_auc_mean": 0.50038,
+      "auc_minus_null_mean": 0.00365,
+      "null_auc_sd": 0.00231,
+      "p_value_raw": 0.05147426286856572,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "bin_mercury_speed_bin",
+      "family": "astro_bin",
+      "auc": 0.50396,
+      "auc_minus_half": 0.00396,
+      "top14_hits": 7.8833,
+      "top14_hits_vs_expected": 0.0433,
+      "null_auc_mean": 0.50563,
+      "auc_minus_null_mean": -0.00167,
+      "null_auc_sd": 0.00217,
+      "p_value_raw": 0.775112443778111,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "astro_channel_lunar_position_phase",
+      "family": "astro_channel",
+      "auc": 0.50393,
+      "auc_minus_half": 0.00393,
+      "top14_hits": 7.8512,
+      "top14_hits_vs_expected": 0.0112,
+      "null_auc_mean": 0.50596,
+      "auc_minus_null_mean": -0.00203,
+      "null_auc_sd": 0.00206,
+      "p_value_raw": 0.8480759620189905,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "bin_lunar_sun_sep_bin",
+      "family": "astro_bin",
+      "auc": 0.5039,
+      "auc_minus_half": 0.0039,
+      "top14_hits": 7.8799,
+      "top14_hits_vs_expected": 0.0399,
+      "null_auc_mean": 0.50343,
+      "auc_minus_null_mean": 0.00048,
+      "null_auc_sd": 0.00244,
+      "p_value_raw": 0.41579210394802596,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "stat_ewma_h80",
+      "family": "statistical",
+      "auc": 0.50338,
+      "auc_minus_half": 0.00338,
+      "top14_hits": 7.8755,
+      "top14_hits_vs_expected": 0.0355,
+      "null_auc_mean": 0.50522,
+      "auc_minus_null_mean": -0.00184,
+      "null_auc_sd": 0.00246,
+      "p_value_raw": 0.7731134432783608,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "bin_lunar_phase_dir",
+      "family": "astro_bin",
+      "auc": 0.50331,
+      "auc_minus_half": 0.00331,
+      "top14_hits": 7.8589,
+      "top14_hits_vs_expected": 0.0189,
+      "null_auc_mean": 0.50513,
+      "auc_minus_null_mean": -0.00182,
+      "null_auc_sd": 0.00217,
+      "p_value_raw": 0.8000999500249875,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "astro_channel_venus_kinematics",
+      "family": "astro_channel",
+      "auc": 0.50329,
+      "auc_minus_half": 0.00329,
+      "top14_hits": 7.8779,
+      "top14_hits_vs_expected": 0.0379,
+      "null_auc_mean": 0.50778,
+      "auc_minus_null_mean": -0.0045,
+      "null_auc_sd": 0.00164,
+      "p_value_raw": 0.9980009995002499,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "astro_channel_jupiter_longitude",
+      "family": "astro_channel",
+      "auc": 0.5032,
+      "auc_minus_half": 0.0032,
+      "top14_hits": 7.8439,
+      "top14_hits_vs_expected": 0.0039,
+      "null_auc_mean": 0.50614,
+      "auc_minus_null_mean": -0.00294,
+      "null_auc_sd": 0.00215,
+      "p_value_raw": 0.9130434782608695,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "stat_frequency_w50",
+      "family": "statistical",
+      "auc": 0.50284,
+      "auc_minus_half": 0.00284,
+      "top14_hits": 7.856,
+      "top14_hits_vs_expected": 0.016,
+      "null_auc_mean": 0.50254,
+      "auc_minus_null_mean": 0.0003,
+      "null_auc_sd": 0.0025,
+      "p_value_raw": 0.45027486256871563,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "lunar_kernel_bw24",
+      "family": "lunar_position",
+      "auc": 0.5028,
+      "auc_minus_half": 0.0028,
+      "top14_hits": 7.8808,
+      "top14_hits_vs_expected": 0.0408,
+      "null_auc_mean": 0.50376,
+      "auc_minus_null_mean": -0.00095,
+      "null_auc_sd": 0.00237,
+      "p_value_raw": 0.6601699150424788,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "stat_ewma_h10",
+      "family": "statistical",
+      "auc": 0.50278,
+      "auc_minus_half": 0.00278,
+      "top14_hits": 7.8546,
+      "top14_hits_vs_expected": 0.0146,
+      "null_auc_mean": 0.50198,
+      "auc_minus_null_mean": 0.0008,
+      "null_auc_sd": 0.00253,
+      "p_value_raw": 0.375312343828086,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "bin_lunar_illumination_bin",
+      "family": "astro_bin",
+      "auc": 0.50232,
+      "auc_minus_half": 0.00232,
+      "top14_hits": 7.8653,
+      "top14_hits_vs_expected": 0.0253,
+      "null_auc_mean": 0.50435,
+      "auc_minus_null_mean": -0.00204,
+      "null_auc_sd": 0.00233,
+      "p_value_raw": 0.8030984507746127,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "bin_venus_motion",
+      "family": "astro_bin",
+      "auc": 0.50227,
+      "auc_minus_half": 0.00227,
+      "top14_hits": 7.8765,
+      "top14_hits_vs_expected": 0.0365,
+      "null_auc_mean": 0.50771,
+      "auc_minus_null_mean": -0.00544,
+      "null_auc_sd": 0.00169,
+      "p_value_raw": 1.0,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "stat_frequency_w25",
+      "family": "statistical",
+      "auc": 0.50222,
+      "auc_minus_half": 0.00222,
+      "top14_hits": 7.8512,
+      "top14_hits_vs_expected": 0.0112,
+      "null_auc_mean": 0.50183,
+      "auc_minus_null_mean": 0.00039,
+      "null_auc_sd": 0.00249,
+      "p_value_raw": 0.4512743628185907,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "bin_venus_speed_bin",
+      "family": "astro_bin",
+      "auc": 0.50221,
+      "auc_minus_half": 0.00221,
+      "top14_hits": 7.8653,
+      "top14_hits_vs_expected": 0.0253,
+      "null_auc_mean": 0.50639,
+      "auc_minus_null_mean": -0.00419,
+      "null_auc_sd": 0.00203,
+      "p_value_raw": 0.9835082458770614,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "lunar_kernel_bw12",
+      "family": "lunar_position",
+      "auc": 0.50217,
+      "auc_minus_half": 0.00217,
+      "top14_hits": 7.8842,
+      "top14_hits_vs_expected": 0.0442,
+      "null_auc_mean": 0.5026,
+      "auc_minus_null_mean": -0.00043,
+      "null_auc_sd": 0.00252,
+      "p_value_raw": 0.5647176411794103,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "stat_ewma_h200",
+      "family": "statistical",
+      "auc": 0.50216,
+      "auc_minus_half": 0.00216,
+      "top14_hits": 7.8628,
+      "top14_hits_vs_expected": 0.0228,
+      "null_auc_mean": 0.50722,
+      "auc_minus_null_mean": -0.00506,
+      "null_auc_sd": 0.00225,
+      "p_value_raw": 0.9890054972513743,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "bin_uranus_motion",
+      "family": "astro_bin",
+      "auc": 0.50199,
+      "auc_minus_half": 0.00199,
+      "top14_hits": 7.8439,
+      "top14_hits_vs_expected": 0.0039,
+      "null_auc_mean": 0.50642,
+      "auc_minus_null_mean": -0.00442,
+      "null_auc_sd": 0.00184,
+      "p_value_raw": 0.9905047476261869,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "lunar_kernel_bw45",
+      "family": "lunar_position",
+      "auc": 0.50197,
+      "auc_minus_half": 0.00197,
+      "top14_hits": 7.8512,
+      "top14_hits_vs_expected": 0.0112,
+      "null_auc_mean": 0.50517,
+      "auc_minus_null_mean": -0.0032,
+      "null_auc_sd": 0.00218,
+      "p_value_raw": 0.9270364817591205,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "bin_lunar_mean_node_quad",
+      "family": "astro_bin",
+      "auc": 0.50191,
+      "auc_minus_half": 0.00191,
+      "top14_hits": 7.8575,
+      "top14_hits_vs_expected": 0.0175,
+      "null_auc_mean": 0.50502,
+      "auc_minus_null_mean": -0.00312,
+      "null_auc_sd": 0.0023,
+      "p_value_raw": 0.912543728135932,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "astro_channel_lunar_nodes",
+      "family": "astro_channel",
+      "auc": 0.5019,
+      "auc_minus_half": 0.0019,
+      "top14_hits": 7.8658,
+      "top14_hits_vs_expected": 0.0258,
+      "null_auc_mean": 0.50629,
+      "auc_minus_null_mean": -0.00439,
+      "null_auc_sd": 0.00224,
+      "p_value_raw": 0.9735132433783108,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "astro_channel_sun_longitude",
+      "family": "astro_channel",
+      "auc": 0.50184,
+      "auc_minus_half": 0.00184,
+      "top14_hits": 7.8512,
+      "top14_hits_vs_expected": 0.0112,
+      "null_auc_mean": 0.50567,
+      "auc_minus_null_mean": -0.00383,
+      "null_auc_sd": 0.00211,
+      "p_value_raw": 0.968015992003998,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "astro_similarity_all",
+      "family": "astro_similarity",
+      "auc": 0.50178,
+      "auc_minus_half": 0.00178,
+      "top14_hits": 7.8463,
+      "top14_hits_vs_expected": 0.0063,
+      "null_auc_mean": 0.50816,
+      "auc_minus_null_mean": -0.00638,
+      "null_auc_sd": 0.00158,
+      "p_value_raw": 1.0,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "bin_mercury_motion",
+      "family": "astro_bin",
+      "auc": 0.5015,
+      "auc_minus_half": 0.0015,
+      "top14_hits": 7.8298,
+      "top14_hits_vs_expected": -0.0102,
+      "null_auc_mean": 0.50687,
+      "auc_minus_null_mean": -0.00537,
+      "null_auc_sd": 0.00189,
+      "p_value_raw": 0.9980009995002499,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "bin_lunar_true_node_quad",
+      "family": "astro_bin",
+      "auc": 0.50148,
+      "auc_minus_half": 0.00148,
+      "top14_hits": 7.8482,
+      "top14_hits_vs_expected": 0.0082,
+      "null_auc_mean": 0.50497,
+      "auc_minus_null_mean": -0.00349,
+      "null_auc_sd": 0.00229,
+      "p_value_raw": 0.9330334832583708,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "astro_channel_lunar_other",
+      "family": "astro_channel",
+      "auc": 0.50137,
+      "auc_minus_half": 0.00137,
+      "top14_hits": 7.8385,
+      "top14_hits_vs_expected": -0.0015,
+      "null_auc_mean": 0.50769,
+      "auc_minus_null_mean": -0.00632,
+      "null_auc_sd": 0.0016,
+      "p_value_raw": 0.9995002498750625,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "bin_lunar_mercury_sep_bin",
+      "family": "astro_bin",
+      "auc": 0.5013,
+      "auc_minus_half": 0.0013,
+      "top14_hits": 7.8264,
+      "top14_hits_vs_expected": -0.0136,
+      "null_auc_mean": 0.50353,
+      "auc_minus_null_mean": -0.00223,
+      "null_auc_sd": 0.00242,
+      "p_value_raw": 0.816591704147926,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "astro_channel_mercury_kinematics",
+      "family": "astro_channel",
+      "auc": 0.50129,
+      "auc_minus_half": 0.00129,
+      "top14_hits": 7.8604,
+      "top14_hits_vs_expected": 0.0204,
+      "null_auc_mean": 0.50722,
+      "auc_minus_null_mean": -0.00593,
+      "null_auc_sd": 0.00185,
+      "p_value_raw": 1.0,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "bin_lunar_sector25",
+      "family": "lunar_position",
+      "auc": 0.50128,
+      "auc_minus_half": 0.00128,
+      "top14_hits": 7.8628,
+      "top14_hits_vs_expected": 0.0228,
+      "null_auc_mean": 0.50154,
+      "auc_minus_null_mean": -0.00027,
+      "null_auc_sd": 0.00256,
+      "p_value_raw": 0.5367316341829086,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "astro_channel_mercury_longitude",
+      "family": "astro_channel",
+      "auc": 0.50119,
+      "auc_minus_half": 0.00119,
+      "top14_hits": 7.8648,
+      "top14_hits_vs_expected": 0.0248,
+      "null_auc_mean": 0.50579,
+      "auc_minus_null_mean": -0.0046,
+      "null_auc_sd": 0.00211,
+      "p_value_raw": 0.9845077461269365,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "stat_frequency_w250",
+      "family": "statistical",
+      "auc": 0.50113,
+      "auc_minus_half": 0.00113,
+      "top14_hits": 7.8473,
+      "top14_hits_vs_expected": 0.0073,
+      "null_auc_mean": 0.50531,
+      "auc_minus_null_mean": -0.00418,
+      "null_auc_sd": 0.00243,
+      "p_value_raw": 0.9600199900049975,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "astro_channel_uranus_kinematics",
+      "family": "astro_channel",
+      "auc": 0.50111,
+      "auc_minus_half": 0.00111,
+      "top14_hits": 7.8268,
+      "top14_hits_vs_expected": -0.0132,
+      "null_auc_mean": 0.50821,
+      "auc_minus_null_mean": -0.0071,
+      "null_auc_sd": 0.00156,
+      "p_value_raw": 1.0,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "astro_channel_neptune_longitude",
+      "family": "astro_channel",
+      "auc": 0.50086,
+      "auc_minus_half": 0.00086,
+      "top14_hits": 7.8497,
+      "top14_hits_vs_expected": 0.0097,
+      "null_auc_mean": 0.50833,
+      "auc_minus_null_mean": -0.00747,
+      "null_auc_sd": 0.00153,
+      "p_value_raw": 1.0,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "astro_channel_pluto_longitude",
+      "family": "astro_channel",
+      "auc": 0.50086,
+      "auc_minus_half": 0.00086,
+      "top14_hits": 7.8526,
+      "top14_hits_vs_expected": 0.0126,
+      "null_auc_mean": 0.50828,
+      "auc_minus_null_mean": -0.00742,
+      "null_auc_sd": 0.00152,
+      "p_value_raw": 1.0,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "astro_channel_jupiter_kinematics",
+      "family": "astro_channel",
+      "auc": 0.50085,
+      "auc_minus_half": 0.00085,
+      "top14_hits": 7.8142,
+      "top14_hits_vs_expected": -0.0258,
+      "null_auc_mean": 0.50738,
+      "auc_minus_null_mean": -0.00653,
+      "null_auc_sd": 0.00184,
+      "p_value_raw": 1.0,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "astro_channel_saturn_longitude",
+      "family": "astro_channel",
+      "auc": 0.50079,
+      "auc_minus_half": 0.00079,
+      "top14_hits": 7.8482,
+      "top14_hits_vs_expected": 0.0082,
+      "null_auc_mean": 0.50845,
+      "auc_minus_null_mean": -0.00766,
+      "null_auc_sd": 0.0021,
+      "p_value_raw": 1.0,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "astro_channel_pluto_kinematics",
+      "family": "astro_channel",
+      "auc": 0.50071,
+      "auc_minus_half": 0.00071,
+      "top14_hits": 7.8463,
+      "top14_hits_vs_expected": 0.0063,
+      "null_auc_mean": 0.50832,
+      "auc_minus_null_mean": -0.00762,
+      "null_auc_sd": 0.00152,
+      "p_value_raw": 1.0,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "astro_channel_sun_kinematics",
+      "family": "astro_channel",
+      "auc": 0.50063,
+      "auc_minus_half": 0.00063,
+      "top14_hits": 7.8307,
+      "top14_hits_vs_expected": -0.0093,
+      "null_auc_mean": 0.50768,
+      "auc_minus_null_mean": -0.00705,
+      "null_auc_sd": 0.00157,
+      "p_value_raw": 1.0,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "astro_channel_saturn_kinematics",
+      "family": "astro_channel",
+      "auc": 0.50059,
+      "auc_minus_half": 0.00059,
+      "top14_hits": 7.8482,
+      "top14_hits_vs_expected": 0.0082,
+      "null_auc_mean": 0.50857,
+      "auc_minus_null_mean": -0.00798,
+      "null_auc_sd": 0.00175,
+      "p_value_raw": 1.0,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "control_random",
+      "family": "control",
+      "auc": 0.50057,
+      "auc_minus_half": 0.00057,
+      "top14_hits": 7.8312,
+      "top14_hits_vs_expected": -0.0088,
+      "null_auc_mean": 0.50013,
+      "auc_minus_null_mean": 0.00044,
+      "null_auc_sd": 0.00253,
+      "p_value_raw": 0.4357821089455272,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "astro_channel_neptune_kinematics",
+      "family": "astro_channel",
+      "auc": 0.50057,
+      "auc_minus_half": 0.00057,
+      "top14_hits": 7.8453,
+      "top14_hits_vs_expected": 0.0053,
+      "null_auc_mean": 0.50816,
+      "auc_minus_null_mean": -0.00759,
+      "null_auc_sd": 0.00149,
+      "p_value_raw": 1.0,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "lunar_kernel_bw8",
+      "family": "lunar_position",
+      "auc": 0.50056,
+      "auc_minus_half": 0.00056,
+      "top14_hits": 7.8429,
+      "top14_hits_vs_expected": 0.0029,
+      "null_auc_mean": 0.50212,
+      "auc_minus_null_mean": -0.00156,
+      "null_auc_sd": 0.00259,
+      "p_value_raw": 0.7276361819090454,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "bin_lunar_zodiac_sign",
+      "family": "lunar_position",
+      "auc": 0.50052,
+      "auc_minus_half": 0.00052,
+      "top14_hits": 7.8546,
+      "top14_hits_vs_expected": 0.0146,
+      "null_auc_mean": 0.50238,
+      "auc_minus_null_mean": -0.00186,
+      "null_auc_sd": 0.0025,
+      "p_value_raw": 0.7776111944027986,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "astro_channel_uranus_longitude",
+      "family": "astro_channel",
+      "auc": 0.50041,
+      "auc_minus_half": 0.00041,
+      "top14_hits": 7.8458,
+      "top14_hits_vs_expected": 0.0058,
+      "null_auc_mean": 0.50868,
+      "auc_minus_null_mean": -0.00827,
+      "null_auc_sd": 0.00164,
+      "p_value_raw": 1.0,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "stat_frequency_all",
+      "family": "statistical",
+      "auc": 0.50025,
+      "auc_minus_half": 0.00025,
+      "top14_hits": 7.8371,
+      "top14_hits_vs_expected": -0.0029,
+      "null_auc_mean": 0.50806,
+      "auc_minus_null_mean": -0.00781,
+      "null_auc_sd": 0.00147,
+      "p_value_raw": 1.0,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "stat_frequency_w500",
+      "family": "statistical",
+      "auc": 0.50018,
+      "auc_minus_half": 0.00018,
+      "top14_hits": 7.8614,
+      "top14_hits_vs_expected": 0.0214,
+      "null_auc_mean": 0.50671,
+      "auc_minus_null_mean": -0.00652,
+      "null_auc_sd": 0.00233,
+      "p_value_raw": 0.9955022488755623,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "bin_jupiter_speed_bin",
+      "family": "astro_bin",
+      "auc": 0.49995,
+      "auc_minus_half": -5e-05,
+      "top14_hits": 7.8157,
+      "top14_hits_vs_expected": -0.0243,
+      "null_auc_mean": 0.50498,
+      "auc_minus_null_mean": -0.00503,
+      "null_auc_sd": 0.00221,
+      "p_value_raw": 0.9880059970014993,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "bin_lunar_venus_sep_bin",
+      "family": "astro_bin",
+      "auc": 0.4999,
+      "auc_minus_half": -0.0001,
+      "top14_hits": 7.8395,
+      "top14_hits_vs_expected": -0.0005,
+      "null_auc_mean": 0.50387,
+      "auc_minus_null_mean": -0.00396,
+      "null_auc_sd": 0.00236,
+      "p_value_raw": 0.9535232383808095,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "bin_jupiter_motion",
+      "family": "astro_bin",
+      "auc": 0.49983,
+      "auc_minus_half": -0.00017,
+      "top14_hits": 7.8132,
+      "top14_hits_vs_expected": -0.0268,
+      "null_auc_mean": 0.50605,
+      "auc_minus_null_mean": -0.00622,
+      "null_auc_sd": 0.00216,
+      "p_value_raw": 0.9985007496251874,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "bin_lunar_apsis",
+      "family": "astro_bin",
+      "auc": 0.49983,
+      "auc_minus_half": -0.00017,
+      "top14_hits": 7.8429,
+      "top14_hits_vs_expected": 0.0029,
+      "null_auc_mean": 0.50791,
+      "auc_minus_null_mean": -0.00809,
+      "null_auc_sd": 0.00157,
+      "p_value_raw": 1.0,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "bin_mars_motion",
+      "family": "astro_bin",
+      "auc": 0.49982,
+      "auc_minus_half": -0.00018,
+      "top14_hits": 7.8264,
+      "top14_hits_vs_expected": -0.0136,
+      "null_auc_mean": 0.50597,
+      "auc_minus_null_mean": -0.00615,
+      "null_auc_sd": 0.00166,
+      "p_value_raw": 1.0,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "bin_sun_speed_bin",
+      "family": "astro_bin",
+      "auc": 0.49942,
+      "auc_minus_half": -0.00058,
+      "top14_hits": 7.8594,
+      "top14_hits_vs_expected": 0.0194,
+      "null_auc_mean": 0.50559,
+      "auc_minus_null_mean": -0.00617,
+      "null_auc_sd": 0.00213,
+      "p_value_raw": 0.999000499750125,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "bin_lunar_nearest_lunation_bin",
+      "family": "astro_bin",
+      "auc": 0.49928,
+      "auc_minus_half": -0.00072,
+      "top14_hits": 7.8424,
+      "top14_hits_vs_expected": 0.0024,
+      "null_auc_mean": 0.50498,
+      "auc_minus_null_mean": -0.0057,
+      "null_auc_sd": 0.00211,
+      "p_value_raw": 0.9975012493753124,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "bin_saturn_motion",
+      "family": "astro_bin",
+      "auc": 0.49905,
+      "auc_minus_half": -0.00095,
+      "top14_hits": 7.8069,
+      "top14_hits_vs_expected": -0.0331,
+      "null_auc_mean": 0.50461,
+      "auc_minus_null_mean": -0.00556,
+      "null_auc_sd": 0.00217,
+      "p_value_raw": 0.9950024987506247,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "lunar_kernel_bw4",
+      "family": "lunar_position",
+      "auc": 0.49888,
+      "auc_minus_half": -0.00112,
+      "top14_hits": 7.8035,
+      "top14_hits_vs_expected": -0.0365,
+      "null_auc_mean": 0.5015,
+      "auc_minus_null_mean": -0.00262,
+      "null_auc_sd": 0.00263,
+      "p_value_raw": 0.8440779610194903,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "astro_channel_mars_kinematics",
+      "family": "astro_channel",
+      "auc": 0.49886,
+      "auc_minus_half": -0.00114,
+      "top14_hits": 7.8132,
+      "top14_hits_vs_expected": -0.0268,
+      "null_auc_mean": 0.50638,
+      "auc_minus_null_mean": -0.00752,
+      "null_auc_sd": 0.0017,
+      "p_value_raw": 1.0,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "bin_calendar_weekday",
+      "family": "calendar",
+      "auc": 0.49877,
+      "auc_minus_half": -0.00123,
+      "top14_hits": 7.8268,
+      "top14_hits_vs_expected": -0.0132,
+      "null_auc_mean": 0.50572,
+      "auc_minus_null_mean": -0.00695,
+      "null_auc_sd": 0.00215,
+      "p_value_raw": 0.9985007496251874,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "astro_channel_mars_longitude",
+      "family": "astro_channel",
+      "auc": 0.498,
+      "auc_minus_half": -0.002,
+      "top14_hits": 7.7977,
+      "top14_hits_vs_expected": -0.0423,
+      "null_auc_mean": 0.50595,
+      "auc_minus_null_mean": -0.00794,
+      "null_auc_sd": 0.00208,
+      "p_value_raw": 1.0,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "bin_calendar_month",
+      "family": "calendar",
+      "auc": 0.49798,
+      "auc_minus_half": -0.00202,
+      "top14_hits": 7.8337,
+      "top14_hits_vs_expected": -0.0063,
+      "null_auc_mean": 0.50255,
+      "auc_minus_null_mean": -0.00457,
+      "null_auc_sd": 0.0025,
+      "p_value_raw": 0.9705147426286856,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "bin_saturn_speed_bin",
+      "family": "astro_bin",
+      "auc": 0.49793,
+      "auc_minus_half": -0.00207,
+      "top14_hits": 7.784,
+      "top14_hits_vs_expected": -0.056,
+      "null_auc_mean": 0.50628,
+      "auc_minus_null_mean": -0.00835,
+      "null_auc_sd": 0.00199,
+      "p_value_raw": 1.0,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "bin_mars_speed_bin",
+      "family": "astro_bin",
+      "auc": 0.4978,
+      "auc_minus_half": -0.0022,
+      "top14_hits": 7.8098,
+      "top14_hits_vs_expected": -0.0302,
+      "null_auc_mean": 0.50664,
+      "auc_minus_null_mean": -0.00883,
+      "null_auc_sd": 0.00161,
+      "p_value_raw": 1.0,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "bin_lunar_mars_sep_bin",
+      "family": "astro_bin",
+      "auc": 0.49635,
+      "auc_minus_half": -0.00365,
+      "top14_hits": 7.7962,
+      "top14_hits_vs_expected": -0.0438,
+      "null_auc_mean": 0.50439,
+      "auc_minus_null_mean": -0.00804,
+      "null_auc_sd": 0.00229,
+      "p_value_raw": 1.0,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "stat_gap_cold",
+      "family": "statistical",
+      "auc": 0.49597,
+      "auc_minus_half": -0.00403,
+      "top14_hits": 7.8161,
+      "top14_hits_vs_expected": -0.0239,
+      "null_auc_mean": 0.49962,
+      "auc_minus_null_mean": -0.00365,
+      "null_auc_sd": 0.00231,
+      "p_value_raw": 0.9490254872563718,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "bin_moon_declination_bin",
+      "family": "astro_bin",
+      "auc": 0.49571,
+      "auc_minus_half": -0.00429,
+      "top14_hits": 7.7938,
+      "top14_hits_vs_expected": -0.0462,
+      "null_auc_mean": 0.50536,
+      "auc_minus_null_mean": -0.00965,
+      "null_auc_sd": 0.00221,
+      "p_value_raw": 1.0,
+      "p_value_family_wise": 1.0
+    },
+    {
+      "strategy": "control_number_index",
+      "family": "control",
+      "auc": 0.49268,
+      "auc_minus_half": -0.00732,
+      "top14_hits": 7.7408,
+      "top14_hits_vs_expected": -0.0992,
+      "null_auc_mean": 0.49268,
+      "auc_minus_null_mean": 0.0,
+      "null_auc_sd": 0.0,
+      "p_value_raw": 1.0,
+      "p_value_family_wise": 1.0
+    }
+  ],
+  "selection_stability": {
+    "selection_winner": "stat_frequency_w100",
+    "winner_auc_in_selection": 0.50721,
+    "winner_auc_in_holdout": 0.50319,
+    "winner_shrinkage": 0.00401,
+    "selection_vs_holdout_correlation": -0.2907,
+    "selection_vs_holdout_rank_correlation": -0.3628,
+    "mean_shrinkage_random_splits": 0.00655,
+    "random_splits": 200,
+    "winner_beat_chance_in_holdout": 146,
+    "winner_beat_chance_rate": 0.73,
+    "distinct_winners_across_splits": 23
+  },
+  "composite_vs_single": {
+    "repeats": 100,
+    "n_components": 69,
+    "methods": {
+      "composite_equal_weight": {
+        "holdout_auc_mean": 0.50272,
+        "holdout_auc_sd": 0.00291,
+        "beats_chance_rate": 0.81
+      },
+      "composite_precision_weighted": {
+        "holdout_auc_mean": 0.50312,
+        "holdout_auc_sd": 0.00327,
+        "beats_chance_rate": 0.85
+      },
+      "best_single_by_selection": {
+        "holdout_auc_mean": 0.50091,
+        "holdout_auc_sd": 0.00313,
+        "beats_chance_rate": 0.65
+      },
+      "top5_blend_by_selection": {
+        "holdout_auc_mean": 0.50274,
+        "holdout_auc_sd": 0.00338,
+        "beats_chance_rate": 0.78
+      },
+      "worst_single_by_selection": {
+        "holdout_auc_mean": 0.50027,
+        "holdout_auc_sd": 0.00306,
+        "beats_chance_rate": 0.48
+      }
+    },
+    "best_method": "composite_precision_weighted",
+    "spread_between_methods": 0.00285,
+    "typical_sd_within_method": 0.00315,
+    "difference_is_within_noise": true,
+    "distinct_champions_across_repeats": 22,
+    "most_frequent_champion": "astro_channel_venus_longitude"
+  },
+  "power_check": {
+    "runs": [
+      {
+        "planted_strength": 0.01,
+        "extra_appearance_probability": 0.0044,
+        "detectors": {
+          "oracle_knows_the_rule": {
+            "auc": 0.50085,
+            "p_value": 0.20159680638722555,
+            "significant": false
+          },
+          "learned_lunar_sector25": {
+            "auc": 0.49975,
+            "p_value": 0.5948103792415169,
+            "significant": false
+          },
+          "learned_lunar_kernel_bw12": {
+            "auc": 0.49872,
+            "p_value": 0.7944111776447106,
+            "significant": false
+          },
+          "astro_similarity_all": {
+            "auc": 0.49345,
+            "p_value": 1.0,
+            "significant": false
+          }
+        },
+        "pattern_search": {
+          "max_chi2": 11.71,
+          "top_cell_bin_value": 6,
+          "top_cell_number": 8,
+          "recovered_planted_rule": false,
+          "permutation_p_value": 0.2777777777777778,
+          "detected": false
+        },
+        "auc_detected_by_learned_sector": false
+      },
+      {
+        "planted_strength": 0.02,
+        "extra_appearance_probability": 0.0088,
+        "detectors": {
+          "oracle_knows_the_rule": {
+            "auc": 0.50101,
+            "p_value": 0.10778443113772455,
+            "significant": false
+          },
+          "learned_lunar_sector25": {
+            "auc": 0.50504,
+            "p_value": 0.07584830339321358,
+            "significant": false
+          },
+          "learned_lunar_kernel_bw12": {
+            "auc": 0.50111,
+            "p_value": 0.7025948103792415,
+            "significant": false
+          },
+          "astro_similarity_all": {
+            "auc": 0.50105,
+            "p_value": 1.0,
+            "significant": false
+          }
+        },
+        "pattern_search": {
+          "max_chi2": 10.71,
+          "top_cell_bin_value": 20,
+          "top_cell_number": 21,
+          "recovered_planted_rule": true,
+          "permutation_p_value": 0.46825396825396826,
+          "detected": false
+        },
+        "auc_detected_by_learned_sector": false
+      },
+      {
+        "planted_strength": 0.05,
+        "extra_appearance_probability": 0.022,
+        "detectors": {
+          "oracle_knows_the_rule": {
+            "auc": 0.5007,
+            "p_value": 0.2554890219560878,
+            "significant": false
+          },
+          "learned_lunar_sector25": {
+            "auc": 0.50361,
+            "p_value": 0.2435129740518962,
+            "significant": false
+          },
+          "learned_lunar_kernel_bw12": {
+            "auc": 0.50551,
+            "p_value": 0.2055888223552894,
+            "significant": false
+          },
+          "astro_similarity_all": {
+            "auc": 0.50539,
+            "p_value": 1.0,
+            "significant": false
+          }
+        },
+        "pattern_search": {
+          "max_chi2": 11.82,
+          "top_cell_bin_value": 5,
+          "top_cell_number": 9,
+          "recovered_planted_rule": false,
+          "permutation_p_value": 0.24603174603174602,
+          "detected": false
+        },
+        "auc_detected_by_learned_sector": false
+      },
+      {
+        "planted_strength": 0.1,
+        "extra_appearance_probability": 0.044,
+        "detectors": {
+          "oracle_knows_the_rule": {
+            "auc": 0.50397,
+            "p_value": 0.001996007984031936,
+            "significant": true
+          },
+          "learned_lunar_sector25": {
+            "auc": 0.4983,
+            "p_value": 0.9101796407185628,
+            "significant": false
+          },
+          "learned_lunar_kernel_bw12": {
+            "auc": 0.49796,
+            "p_value": 0.9660678642714571,
+            "significant": false
+          },
+          "astro_similarity_all": {
+            "auc": 0.5001,
+            "p_value": 1.0,
+            "significant": false
+          }
+        },
+        "pattern_search": {
+          "max_chi2": 10.28,
+          "top_cell_bin_value": 10,
+          "top_cell_number": 15,
+          "recovered_planted_rule": false,
+          "permutation_p_value": 0.5079365079365079,
+          "detected": false
+        },
+        "auc_detected_by_learned_sector": false
+      },
+      {
+        "planted_strength": 0.25,
+        "extra_appearance_probability": 0.11,
+        "detectors": {
+          "oracle_knows_the_rule": {
+            "auc": 0.50926,
+            "p_value": 0.001996007984031936,
+            "significant": true
+          },
+          "learned_lunar_sector25": {
+            "auc": 0.50556,
+            "p_value": 0.09181636726546906,
+            "significant": false
+          },
+          "learned_lunar_kernel_bw12": {
+            "auc": 0.50641,
+            "p_value": 0.12375249500998003,
+            "significant": false
+          },
+          "astro_similarity_all": {
+            "auc": 0.50444,
+            "p_value": 1.0,
+            "significant": false
+          }
+        },
+        "pattern_search": {
+          "max_chi2": 18.41,
+          "top_cell_bin_value": 22,
+          "top_cell_number": 23,
+          "recovered_planted_rule": true,
+          "permutation_p_value": 0.007936507936507936,
+          "detected": true
+        },
+        "auc_detected_by_learned_sector": false
+      }
+    ],
+    "minimum_detectable_strength": 0.25,
+    "note": "El AUC tiene techo bajo para efectos concentrados en un número: mira el oráculo para ver el máximo alcanzable a cada intensidad."
+  },
+  "runtime_seconds": 31.4
+}

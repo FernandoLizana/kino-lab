@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es" data-bs-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Kino Lab{% endblock %}</title>
+  <link href="{{ url_for('static', filename='vendor/bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/app.css') }}" rel="stylesheet">
+  <script src="{{ url_for('static', filename='vendor/chart.umd.min.js') }}"></script>
+</head>
+<body>
+  <a class="visually-hidden-focusable btn btn-primary skip-link" href="#contenido">Saltar al contenido</a>
+  <nav class="navbar navbar-expand-lg border-bottom border-secondary mb-4" aria-label="Principal">
+    <div class="container">
+      <a class="navbar-brand fw-semibold" href="{{ url_for('lab.home') }}">Kino Lab</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain" aria-controls="navMain" aria-expanded="false" aria-label="Abrir menú">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navMain">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('lab.home') }}">Inicio</a></li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Explorar</a>
+            <ul class="dropdown-menu dropdown-menu-dark">
+              <li><a class="dropdown-item" href="{{ url_for('lab.explore') }}">Histórico</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('lab.importer') }}">Importar CSV</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('analysis') }}">Análisis clásico</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('colors') }}">Colores</a></li>
+            </ul>
+          </li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('lab.probabilities') }}">Probabilidades</a></li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Simular</a>
+            <ul class="dropdown-menu dropdown-menu-dark">
+              <li><a class="dropdown-item" href="{{ url_for('lab.simulate') }}">Monte Carlo</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('lab.combos') }}">Combinaciones</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('score') }}">Puntuar</a></li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Comparar</a>
+            <ul class="dropdown-menu dropdown-menu-dark">
+              <li><a class="dropdown-item" href="{{ url_for('lab.compare') }}">Estrategias</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('backtest') }}">Backtesting</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('lab.models_page') }}">Fichas de modelos</a></li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Aprender</a>
+            <ul class="dropdown-menu dropdown-menu-dark">
+              <li><a class="dropdown-item" href="{{ url_for('lab.learn') }}">Desafíos</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('lab.bias') }}">Sesgos</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('lab.budget') }}">Gastos ficticios</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('lab.assistant') }}">Asistente</a></li>
+            </ul>
+          </li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('lab.notebooks') }}">Experimentos</a></li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Más</a>
+            <ul class="dropdown-menu dropdown-menu-dark">
+              <li><a class="dropdown-item" href="{{ url_for('dashboard') }}">Dashboard</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('results') }}">Resultados</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('lotteries.catalog') }}">Otras loterías</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('lab.settings') }}">Ajustes</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main id="contenido" class="container pb-5" tabindex="-1">
+    <div class="alert alert-warning border-0" role="alert">
+      <strong>Disclaimer.</strong> {{ disclaimer }}
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <script src="{{ url_for('static', filename='vendor/bootstrap.bundle.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

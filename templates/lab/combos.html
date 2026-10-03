@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Combinaciones · Kino Lab{% endblock %}
+{% block content %}
+<h1 class="h3">Generación válida</h1>
+<p class="text-secondary">En un sorteo uniforme, cada boleto válido del mismo tamaño tiene la misma P(pleno). Los filtros son preferencias.</p>
+<form method="post" class="card p-3 mb-3">
+  <input type="hidden" name="profile" value="{{ profile.slug }}">
+  <div class="row g-2">
+    <div class="col-md-2"><label class="form-label" for="count">Cantidad</label><input class="form-control" id="count" name="count" type="number" min="1" max="200" value="5"></div>
+    <div class="col-md-2"><label class="form-label" for="seed">Semilla</label><input class="form-control" id="seed" name="seed" type="number" value="42"></div>
+    <div class="col-md-3"><label class="form-label" for="include">Incluir</label><input class="form-control" id="include" name="include" placeholder="1,7,14"></div>
+    <div class="col-md-3"><label class="form-label" for="exclude">Excluir</label><input class="form-control" id="exclude" name="exclude" placeholder="25"></div>
+    <div class="col-md-2"><label class="form-label" for="even_count">Pares (opc.)</label><input class="form-control" id="even_count" name="even_count" type="number" min="0"></div>
+  </div>
+  <div class="form-check mt-2">
+    <input class="form-check-input" type="checkbox" name="save" id="save">
+    <label class="form-check-label" for="save">Guardar como favoritos</label>
+  </div>
+  <button class="btn btn-primary mt-2" type="submit">Generar (muestreo uniforme filtrado)</button>
+</form>
+{% if generated %}
+<p class="small">Permitidas: {{ generated.allowed }} · {{ generated.sampling }} · {{ generated.filters.note }}</p>
+<ul>{% for t in generated.tickets %}<li><code>{{ t|join('-') }}</code></li>{% endfor %}</ul>
+{% endif %}
+<h2 class="h5">Favoritos</h2>
+{% if saved %}
+<table class="table table-sm"><thead><tr><th>Boleto</th><th></th></tr></thead>
+<tbody>
+{% for s in saved %}
+<tr>
+  <td><code>{{ s.numbers_csv }}</code></td>
+  <td>
+    <form method="post" action="{{ url_for('lab.delete_combo', combo_id=s.id) }}">
+      <button class="btn btn-sm btn-outline-danger" type="submit">Quitar</button>
+    </form>
+  </td>
+</tr>
+{% endfor %}
+</tbody></table>
+{% else %}<p class="text-secondary">Ninguno aún.</p>{% endif %}
+{% endblock %}

@@ -1,0 +1,331 @@
+{% extends "base.html" %}
+{% block title %}Arco de colores · Kino Lab{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+  <div>
+    <h1 class="h3 mb-1">Arco de colores</h1>
+    <p class="text-secondary mb-0">
+      Cada número ocupa 14.4° del círculo. Cada sorteo es un punto en el tono de su combinación.
+    </p>
+  </div>
+  <div class="d-flex gap-2 flex-wrap">
+    <a class="btn btn-outline-light" href="{{ url_for('analysis') }}">Volver al análisis</a>
+    {% if arc and arc.draw_count %}
+    <form method="post" action="{{ url_for('color_predict') }}" id="colorPredictForm">
+      <input type="hidden" name="sample_size" value="20000">
+      <input type="hidden" name="mode" id="colorMode" value="continue">
+      <input type="hidden" name="target_hue" id="colorTargetHue" value="">
+      <button class="btn btn-info" type="submit" title="Genera 14 números cerca de un tono. No es probabilidad.">
+        Predecir próximo sorteo
+      </button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+
+{% if not arc or not arc.draw_count %}
+<div class="alert alert-info">No hay sorteos cargados. <a href="{{ url_for('upload') }}">Sube un CSV</a>.</div>
+{% else %}
+<div class="alert alert-secondary py-2 small">
+  {{ arc.note }}
+  · {{ arc.draw_count }} sorteos.
+  El botón predice una cartilla cuyo <em>color</em> se parece al tono elegido;
+  el histórico no mostró que eso acierte más que el azar.
+</div>
+
+<div class="card p-3 mb-3">
+  <div class="d-flex flex-wrap gap-3 align-items-end">
+    <div>
+      <label class="form-label small mb-1" for="colorModeSelect">Tono objetivo</label>
+      <select class="form-select form-select-sm" id="colorModeSelect">
+        <option value="continue">Continuar el último sorteo</option>
+        <option value="complement">Complemento (lado opuesto del aro)</option>
+        <option value="pick">El que yo marque en el aro</option>
+      </select>
+    </div>
+    <div class="small text-secondary" id="colorTargetHint">
+      Se usa el color del último sorteo. También podés hacer clic en el aro.
+    </div>
+  </div>
+</div>
+
+{% if prediction and prediction.get('prediction') %}
+{% set pred = prediction.prediction %}
+{% set tgt = prediction.target or {} %}
+<div class="alert alert-info py-2 mb-3">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+    <div>
+      <strong>Predicción para {{ prediction.get('target_draw_label', 'el próximo sorteo') }}</strong>
+      <div class="small">
+        Objetivo: {{ tgt.get('rationale', 'tono') }}
+        ({{ "%.0f"|format(tgt.get('hue_deg', 0)) }}° · {{ tgt.get('hex', '') }}).
+        Afinidad de color, no probabilidad.
+      </div>
+      <div class="mt-2" id="predBallsStatic">
+        {% for n in pred.get('numbers', []) %}
+        <span class="ball" style="background: {{ pred.get('hex', '#243041') }}; border-color: transparent;">{{ "%02d"|format(n) }}</span>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="text-end">
+      <button class="btn btn-warning" type="button" id="copyPredNumbers"
+              data-numbers="{{ pred.get('numbers_csv', '') }}">
+        Copiar 14 números
+      </button>
+      <div class="small mt-1" id="copyPredFeedback"></div>
+      {% if prediction.get('experiment_id') %}
+      <a class="small d-block mt-1" href="{{ url_for('results', id=prediction.experiment_id) }}">Ver ranking</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="card p-3">
+      <div class="color-arc-stage" id="colorArcStage">
+        <div class="color-arc-wheel" aria-hidden="true"></div>
+        <svg id="colorArcSvg" viewBox="0 0 420 420" role="img" aria-label="Arco cromático de combinaciones Kino">
+          <g id="colorArcDots"></g>
+          <g id="colorArcNumbers"></g>
+          <g id="colorArcLast"></g>
+          <g id="colorArcPred"></g>
+        </svg>
+        <div class="color-arc-center" id="colorArcCenter">
+          <div class="swatch" id="colorArcSwatch"></div>
+          <div class="label" id="colorArcLabel">tocá un punto</div>
+        </div>
+      </div>
+      <div class="small text-secondary mt-2">
+        El anillo es el espectro. Los números 1–25 van en el borde.
+        Los puntos son sorteos (afuera = más nuevos). El último va con halo.
+        La predicción, si hay, es la estrella fuera del anillo. Clic en el aro para elegir tono.
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card p-3 mb-3" id="colorArcDetail">
+      <h2 class="h6">Combinación</h2>
+      <div class="d-flex align-items-center gap-3 mb-2">
+        <div class="color-swatch-lg" id="detailSwatch"></div>
+        <div>
+          <div class="fw-semibold" id="detailDate">—</div>
+          <div class="small text-secondary" id="detailMeta">—</div>
+        </div>
+      </div>
+      <div class="mb-2" id="detailBalls"></div>
+      <div class="small" id="detailHex"></div>
+    </div>
+    <div class="card p-3">
+      <h2 class="h6">Pigmento dominante</h2>
+      <p class="small text-secondary mb-2">
+        Quién “gana” en cada sorteo. El rojo sale más por el desempate, también en el azar.
+      </p>
+      <div id="pigmentBars"></div>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{% if arc and arc.draw_count %}
+<script>
+(() => {
+  const arc = {{ arc | tojson }};
+  const svg = document.getElementById("colorArcSvg");
+  const dotsG = document.getElementById("colorArcDots");
+  const numsG = document.getElementById("colorArcNumbers");
+  const lastG = document.getElementById("colorArcLast");
+  const predG = document.getElementById("colorArcPred");
+  const prediction = {{ (prediction or {}) | tojson }};
+  const cx = 210, cy = 210;
+  const ringR = 168;
+  const innerR = 78;
+  const outerR = 148;
+  const predR = 188;
+
+  const polar = (deg, r) => {
+    const rad = (deg - 90) * Math.PI / 180;
+    return [cx + r * Math.cos(rad), cy + r * Math.sin(rad)];
+  };
+
+  const show = (point) => {
+    document.getElementById("colorArcSwatch").style.background = point.hex;
+    document.getElementById("colorArcLabel").textContent = point.date;
+    document.getElementById("detailSwatch").style.background = point.hex;
+    document.getElementById("detailDate").textContent = point.date;
+    document.getElementById("detailMeta").textContent =
+      `tono ${point.hue_deg.toFixed(0)}° · ${point.dominant} · sat ${(point.saturation * 100).toFixed(0)}%`;
+    document.getElementById("detailHex").textContent = point.hex;
+    const balls = document.getElementById("detailBalls");
+    balls.innerHTML = "";
+    const hueByNumber = Object.fromEntries(arc.numbers.map((n) => [n.number, n.hex]));
+    for (const n of point.numbers) {
+      const span = document.createElement("span");
+      span.className = "ball";
+      span.style.background = hueByNumber[n] || "#243041";
+      span.style.borderColor = "transparent";
+      span.textContent = String(n).padStart(2, "0");
+      balls.appendChild(span);
+    }
+  };
+
+  arc.numbers.forEach((mark) => {
+    const [x, y] = polar(mark.hue_deg, ringR);
+    const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    text.setAttribute("x", x);
+    text.setAttribute("y", y);
+    text.setAttribute("text-anchor", "middle");
+    text.setAttribute("dominant-baseline", "middle");
+    text.setAttribute("class", "arc-num");
+    text.setAttribute("fill", mark.hex);
+    text.textContent = mark.number;
+    numsG.appendChild(text);
+  });
+
+  const n = Math.max(arc.points.length - 1, 1);
+  arc.points.forEach((point, i) => {
+    const r = innerR + (outerR - innerR) * (i / n);
+    const [x, y] = polar(point.hue_deg, r);
+    const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    c.setAttribute("cx", x);
+    c.setAttribute("cy", y);
+    c.setAttribute("r", i === n ? 5.5 : 2.2);
+    c.setAttribute("fill", point.hex);
+    c.setAttribute("fill-opacity", i === n ? "1" : "0.72");
+    c.setAttribute("class", "arc-dot");
+    c.dataset.index = String(i);
+    c.addEventListener("mouseenter", () => show(point));
+    c.addEventListener("click", () => show(point));
+    dotsG.appendChild(c);
+  });
+
+  if (arc.last) {
+    const [x, y] = polar(arc.last.hue_deg, outerR);
+    const halo = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    halo.setAttribute("cx", x);
+    halo.setAttribute("cy", y);
+    halo.setAttribute("r", 10);
+    halo.setAttribute("fill", "none");
+    halo.setAttribute("stroke", "#e7eef7");
+    halo.setAttribute("stroke-width", "1.5");
+    lastG.appendChild(halo);
+    show(arc.last);
+  }
+
+  const drawMarker = (group, hue, hex, label) => {
+    const [x, y] = polar(hue, predR);
+    const star = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+    const r = 8;
+    const pts = [];
+    for (let i = 0; i < 10; i++) {
+      const rad = (i * 36 - 90) * Math.PI / 180;
+      const rr = i % 2 === 0 ? r : r * 0.42;
+      pts.push(`${x + rr * Math.cos(rad)},${y + rr * Math.sin(rad)}`);
+    }
+    star.setAttribute("points", pts.join(" "));
+    star.setAttribute("fill", hex);
+    star.setAttribute("stroke", "#e7eef7");
+    star.setAttribute("stroke-width", "1.2");
+    star.setAttribute("class", "arc-pred");
+    group.appendChild(star);
+    if (label) {
+      const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      t.setAttribute("x", x);
+      t.setAttribute("y", y + 16);
+      t.setAttribute("text-anchor", "middle");
+      t.setAttribute("class", "arc-pred-label");
+      t.setAttribute("fill", "#e7eef7");
+      t.textContent = label;
+      group.appendChild(t);
+    }
+  };
+
+  const predPoint = prediction && prediction.prediction;
+  if (predPoint) {
+    drawMarker(predG, predPoint.hue_deg, predPoint.hex, "pred");
+    show({
+      date: "predicción",
+      hex: predPoint.hex,
+      hue_deg: predPoint.hue_deg,
+      dominant: predPoint.dominant,
+      saturation: predPoint.saturation || 0,
+      numbers: predPoint.numbers || [],
+    });
+  }
+
+  const modeSelect = document.getElementById("colorModeSelect");
+  const modeInput = document.getElementById("colorMode");
+  const hueInput = document.getElementById("colorTargetHue");
+  const hint = document.getElementById("colorTargetHint");
+  const hints = {
+    continue: "Se usa el color del último sorteo. También podés hacer clic en el aro.",
+    complement: "Se usa el lado opuesto del último sorteo.",
+    pick: "Hacé clic en el aro para fijar el tono, después pulsá predecir.",
+  };
+  if (modeSelect) {
+    modeSelect.addEventListener("change", () => {
+      modeInput.value = modeSelect.value;
+      hint.textContent = hints[modeSelect.value] || hints.continue;
+    });
+  }
+
+  const stage = document.getElementById("colorArcStage");
+  stage.addEventListener("click", (ev) => {
+    if (ev.target.closest(".arc-dot") || ev.target.closest(".arc-pred")) return;
+    const rect = stage.getBoundingClientRect();
+    const x = ev.clientX - rect.left - rect.width / 2;
+    const y = ev.clientY - rect.top - rect.height / 2;
+    let deg = Math.atan2(x, -y) * 180 / Math.PI;
+    if (deg < 0) deg += 360;
+    hueInput.value = deg.toFixed(2);
+    if (modeSelect && modeSelect.value !== "pick") {
+      modeSelect.value = "pick";
+      modeInput.value = "pick";
+      hint.textContent = hints.pick;
+    }
+    predG.querySelectorAll(".arc-target").forEach((n) => n.remove());
+    const [tx, ty] = polar(deg, predR);
+    const mark = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    mark.setAttribute("cx", tx);
+    mark.setAttribute("cy", ty);
+    mark.setAttribute("r", 6);
+    mark.setAttribute("fill", "none");
+    mark.setAttribute("stroke", "#3d8bfd");
+    mark.setAttribute("stroke-width", "2");
+    mark.setAttribute("class", "arc-target");
+    predG.appendChild(mark);
+    hint.textContent = `Tono elegido: ${deg.toFixed(0)}°. Pulsa predecir para generar la cartilla.`;
+  });
+
+  const copyBtn = document.getElementById("copyPredNumbers");
+  if (copyBtn) {
+    copyBtn.addEventListener("click", async () => {
+      const text = (copyBtn.dataset.numbers || "").replace(/-/g, " ");
+      const fb = document.getElementById("copyPredFeedback");
+      try {
+        await navigator.clipboard.writeText(text);
+        fb.textContent = "Copiado";
+      } catch {
+        fb.textContent = "No se pudo copiar";
+      }
+    });
+  }
+
+  const bars = document.getElementById("pigmentBars");
+  const maxC = Math.max(...arc.pigments.map((p) => p.dominant_count), 1);
+  for (const p of arc.pigments) {
+    const row = document.createElement("div");
+    row.className = "pigment-row";
+    row.innerHTML = `
+      <span class="pigment-name"><span class="pigment-dot" style="background:${p.hex}"></span>${p.name} <small>${p.numbers}</small></span>
+      <span class="pigment-track"><span class="pigment-fill" style="width:${(100 * p.dominant_count / maxC).toFixed(1)}%;background:${p.hex}"></span></span>
+      <span class="pigment-n">${p.dominant_count}</span>`;
+    bars.appendChild(row);
+  }
+})();
+</script>
+{% endif %}
+{% endblock %}

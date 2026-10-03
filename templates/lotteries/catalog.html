@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Otras loterías — Kino Lab{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+  <div>
+    <h1 class="h3 mb-1">Otras loterías</h1>
+    <p class="text-secondary mb-0">Catálogo local consolidado: reglas, históricos y patrones descriptivos.</p>
+  </div>
+  <a class="btn btn-outline-info" href="{{ url_for('lotteries.compare') }}">Comparar juegos</a>
+</div>
+
+<div class="alert alert-secondary border-0" role="alert">
+  {{ lottery_disclaimer }}
+</div>
+
+<div class="row g-3">
+  {% for card in cards %}
+  <div class="col-md-6 col-xl-4">
+    <div class="border border-secondary rounded-3 p-3 h-100 d-flex flex-column">
+      <div class="d-flex justify-content-between align-items-start mb-2">
+        <div>
+          <h2 class="h5 mb-1">{{ card.game.name }}</h2>
+          <div class="small text-secondary">{{ card.game.country }}</div>
+        </div>
+        {% if card.has_sync %}
+        <span class="badge text-bg-success">Sync API</span>
+        {% else %}
+        <span class="badge text-bg-secondary">CSV</span>
+        {% endif %}
+      </div>
+      <p class="small mb-2">{{ card.rules_summary }}</p>
+      <p class="small text-secondary mb-3">{{ card.draw_count }} sorteos locales</p>
+      <div class="mt-auto d-flex flex-wrap gap-2">
+        <a class="btn btn-sm btn-primary" href="{{ url_for('lotteries.detail', slug=card.game.slug) }}">Ver ficha</a>
+        <a class="btn btn-sm btn-outline-light" href="{{ url_for('lotteries.analysis', slug=card.game.slug) }}">Análisis</a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

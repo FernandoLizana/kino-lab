@@ -1,0 +1,4 @@
+Bootstrap 5.3.3 — https://getbootstrap.com — MIT
+Chart.js 4.4.1 — https://www.chartjs.org — MIT
+
+Copiados localmente para que el laboratorio funcione sin CDN.

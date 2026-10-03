@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}{{ item.title }} · Kino Lab{% endblock %}
+{% block content %}
+<h1 class="h4">{{ item.title }}</h1>
+<p>{{ item.prompt }}</p>
+<form method="post">
+  {% for opt in item.options %}
+  <div class="form-check">
+    <input class="form-check-input" type="radio" name="choice" id="c{{ loop.index0 }}" value="{{ loop.index0 }}" required>
+    <label class="form-check-label" for="c{{ loop.index0 }}">{{ opt }}</label>
+  </div>
+  {% endfor %}
+  <button class="btn btn-primary mt-3" type="submit">Responder</button>
+  <a class="btn btn-outline-light mt-3" href="{{ url_for('lab.challenge', cid=item.id) }}">Reiniciar</a>
+</form>
+{% if graded %}
+<div class="alert {{ 'alert-success' if graded.correct else 'alert-warning' }} mt-3">
+  {{ graded.explain }}
+</div>
+{% endif %}
+<p class="small mt-3"><a href="{{ url_for('lab.learn') }}">Volver</a></p>
+{% endblock %}

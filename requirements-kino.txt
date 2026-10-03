@@ -1,0 +1,4 @@
+# Kino lab — pipeline nuevo (dataset + sync + Monte Carlo streaming)
+numpy>=1.26.0,<3.0
+pandas>=2.2.0,<3.0
+requests>=2.32.0,<3.0

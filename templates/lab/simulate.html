@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Simular · Kino Lab{% endblock %}
+{% block content %}
+<h1 class="h3">Simulación</h1>
+<p class="text-secondary">Monte Carlo por bloques. No se guardan los sorteos, solo acumuladores. Tope {{ limits.max }} (no miles de millones).</p>
+<form method="post" class="card p-3">
+  <input type="hidden" name="profile" value="{{ profile.slug }}">
+  <div class="mb-2">
+    <label class="form-label">Modo</label>
+    <div>
+      <label class="me-3"><input type="radio" name="mode" value="quick" checked> Rápido ({{ limits.quick }})</label>
+      <label><input type="radio" name="mode" value="detailed"> Detallado ({{ limits.detailed }})</label>
+    </div>
+  </div>
+  <div class="mb-2">
+    <label class="form-label" for="ticket">Boleto (vacío = uno aleatorio con la semilla)</label>
+    <input class="form-control" id="ticket" name="ticket" placeholder="1,2,3,...">
+  </div>
+  <div class="mb-2">
+    <label class="form-label" for="seed">Semilla</label>
+    <input class="form-control" id="seed" name="seed" type="number" value="42">
+  </div>
+  <button class="btn btn-primary" type="submit">Simular en segundo plano</button>
+</form>
+<p class="small mt-3">Si un evento raro sale 0 veces, su probabilidad teórica no es cero. Cancela o pausa en la ficha del job.</p>
+{% endblock %}

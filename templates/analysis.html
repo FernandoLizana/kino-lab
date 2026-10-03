@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %}Análisis · Kino Lab{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Análisis histórico</h1>
+{% if not analysis %}
+<div class="alert alert-info">No hay sorteos cargados. <a href="{{ url_for('upload') }}">Sube un CSV</a>.</div>
+{% else %}
+<p class="text-secondary">Basado en {{ analysis.draw_count }} sorteos. Frecuencia esperada por número ≈ {{ "%.1f"|format(analysis.expected_frequency) }}.</p>
+
+<div class="row g-3 mb-3">
+  <div class="col-lg-8">
+    <div class="card p-3">
+      <h2 class="h6">Frecuencia por número</h2>
+      <canvas id="freqChart" height="120"></canvas>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card p-3 h-100">
+      <h2 class="h6">Resumen</h2>
+      <ul class="list-unstyled mb-0">
+        <li>Suma promedio: <strong>{{ "%.1f"|format(analysis.sum.mean) }}</strong></li>
+        <li>Suma min/max: {{ analysis.sum.min }} / {{ analysis.sum.max }}</li>
+        <li>Consecutivos promedio: <strong>{{ "%.2f"|format(analysis.consecutive.mean) }}</strong></li>
+        <li>Consecutivos máx: {{ analysis.consecutive.max }}</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-lg-6">
+    <div class="card p-3">
+      <h2 class="h6">Atraso (sorteos desde última aparición)</h2>
+      <canvas id="gapChart" height="140"></canvas>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card p-3">
+      <h2 class="h6">Distribución pares / impares</h2>
+      <canvas id="parityChart" height="140"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="card p-3">
+      <h2 class="h6">Parejas más frecuentes</h2>
+      <div class="table-responsive" style="max-height: 320px;">
+        <table class="table table-sm">
+          <thead><tr><th>Pareja</th><th>Count</th></tr></thead>
+          <tbody>
+            {% for item in analysis.pairs[:20] %}
+            <tr><td>{{ "%02d-%02d"|format(item.pair[0], item.pair[1]) }}</td><td>{{ item.count }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card p-3">
+      <h2 class="h6">Tríos más frecuentes</h2>
+      <div class="table-responsive" style="max-height: 320px;">
+        <table class="table table-sm">
+          <thead><tr><th>Trío</th><th>Count</th></tr></thead>
+          <tbody>
+            {% for item in analysis.triples[:15] %}
+            <tr>
+              <td>{{ "%02d-%02d-%02d"|format(item.triple[0], item.triple[1], item.triple[2]) }}</td>
+              <td>{{ item.count }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{% if analysis %}
+<script>
+chartDefaults();
+const freq = {{ analysis.frequency | tojson }};
+const gaps = {{ analysis.gaps | tojson }};
+const parity = {{ analysis.parity | tojson }};
+const labels = Object.keys(freq);
+new Chart(document.getElementById('freqChart'), {
+  type: 'bar',
+  data: {
+    labels,
+    datasets: [{
+      label: 'Frecuencia',
+      data: labels.map(k => freq[k]),
+      backgroundColor: '#3d8bfd'
+    }]
+  },
+  options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+});
+new Chart(document.getElementById('gapChart'), {
+  type: 'bar',
+  data: {
+    labels,
+    datasets: [{
+      label: 'Atraso',
+      data: labels.map(k => gaps[k]),
+      backgroundColor: '#6f42c1'
+    }]
+  },
+  options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+});
+const pLabels = Object.keys(parity);
+new Chart(document.getElementById('parityChart'), {
+  type: 'doughnut',
+  data: {
+    labels: pLabels,
+    datasets: [{ data: pLabels.map(k => parity[k]), backgroundColor: ['#3d8bfd','#20c997','#fd7e14','#6f42c1','#d63384','#adb5bd'] }]
+  }
+});
+</script>
+{% endif %}
+{% endblock %}

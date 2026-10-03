@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Aprender · Kino Lab{% endblock %}
+{% block content %}
+<h1 class="h3">Desafíos</h1>
+<p class="text-secondary">Progreso local. No hay premios ligados a apostar.</p>
+<div class="row g-3">
+  {% for c in challenges %}
+  <div class="col-md-6">
+    <div class="card p-3 h-100">
+      <h2 class="h6">{{ c.title }}</h2>
+      <p class="small">{{ c.prompt }}</p>
+      {% if progress.get(c.id) and progress[c.id].correct %}
+      <span class="badge text-bg-success">Completado</span>
+      {% endif %}
+      <a class="btn btn-sm btn-outline-light mt-2" href="{{ url_for('lab.challenge', cid=c.id) }}">Abrir</a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+<p class="mt-3"><a href="{{ url_for('lab.bias') }}">Laboratorio de sesgos</a> · <a href="{{ url_for('lab.budget') }}">Gastos ficticios</a> · <a href="{{ url_for('lab.assistant') }}">Asistente local</a></p>
+{% endblock %}

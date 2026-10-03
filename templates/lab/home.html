@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Inicio · Kino Lab{% endblock %}
+{% block content %}
+<h1 class="h3 mb-2">Qué quieres investigar</h1>
+<p class="text-secondary">Laboratorio local. Sin cuentas. Los ejemplos sintéticos están marcados.</p>
+
+{% if show_tour %}
+<div class="alert alert-info" id="tourBox">
+  <strong>Recorrido de 30 segundos.</strong>
+  1) Carga un ejemplo.
+  2) Mira un resultado etiquetado.
+  3) Omite esto cuando quieras.
+  <button class="btn btn-sm btn-outline-light ms-2" type="button" id="skipTour">Omitir</button>
+</div>
+{% endif %}
+
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="card p-3 h-100">
+      <h2 class="h6">Explorar históricos</h2>
+      <p class="small text-secondary">Frecuencias y atrasos con denominador visible.</p>
+      <form method="post" action="{{ url_for('lab.load_demo', kind='historico') }}">
+        <button class="btn btn-primary btn-sm" type="submit">Ejemplo sintético</button>
+      </form>
+      <a class="small d-block mt-2" href="{{ url_for('lab.explore') }}">Ir al explorador</a>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-3 h-100">
+      <h2 class="h6">Entender probabilidades</h2>
+      <p class="small text-secondary">Cálculo teórico hipergeométrico. No es un premio.</p>
+      <a class="btn btn-primary btn-sm" href="{{ url_for('lab.probabilities', profile='kino_moderno') }}">Ver 14/25</a>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-3 h-100">
+      <h2 class="h6">Simular</h2>
+      <p class="small text-secondary">Monte Carlo con progreso, pausa y cancelación.</p>
+      <a class="btn btn-primary btn-sm" href="{{ url_for('lab.simulate') }}">Simular ahora</a>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-3 h-100">
+      <h2 class="h6">Comparar estrategias</h2>
+      <p class="small text-secondary">Misma fechas y boletos. Referencia uniforme.</p>
+      <a class="btn btn-primary btn-sm" href="{{ url_for('lab.compare') }}">Comparar</a>
+    </div>
+  </div>
+</div>
+
+<div class="card p-3 mb-3">
+  <h2 class="h6">Datos en este equipo</h2>
+  <div class="table-responsive">
+    <table class="table table-sm mb-0">
+      <thead><tr><th>Perfil</th><th>Sorteos</th><th>Tipo</th></tr></thead>
+      <tbody>
+        {% for p in profiles %}
+        <tr>
+          <td>{{ p.name }}</td>
+          <td>{{ counts.get(p.slug, 0) }}</td>
+          <td>{% if p.synthetic %}<span class="badge text-bg-warning">sintético</span>{% else %}histórico{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if last_import %}
+  <p class="small text-secondary mt-2 mb-0">
+    Última importación: {{ last_import.created_at }} · huella {{ last_import.fingerprint[:12] }}…
+    (fecha de importación ≠ fecha del último sorteo)
+  </p>
+  {% endif %}
+</div>
+<p class="small"><a href="{{ url_for('lab.importer') }}">Importar CSV propio</a> · <a href="{{ url_for('dashboard') }}">Dashboard clásico</a></p>
+{% endblock %}
+{% block scripts %}
+<script>
+document.getElementById("skipTour")?.addEventListener("click", () => {
+  document.cookie = "kino_tour=1;path=/;max-age=31536000";
+  document.getElementById("tourBox")?.remove();
+});
+</script>
+{% endblock %}

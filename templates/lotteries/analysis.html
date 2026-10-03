@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% block title %}Análisis {{ game.name }}{% endblock %}
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb mb-0">
+    <li class="breadcrumb-item"><a href="{{ url_for('lotteries.catalog') }}">Otras loterías</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('lotteries.detail', slug=game.slug) }}">{{ game.name }}</a></li>
+    <li class="breadcrumb-item active">Análisis</li>
+  </ol>
+</nav>
+
+<h1 class="h3 mb-1">Análisis — {{ game.name }}</h1>
+<p class="text-secondary">{{ draw_count }} sorteos locales</p>
+<div class="alert alert-secondary border-0">{{ lottery_disclaimer }}</div>
+
+{% if not analysis %}
+<p class="text-secondary">Carga históricos para ver patrones descriptivos.</p>
+<a class="btn btn-primary" href="{{ url_for('lotteries.detail', slug=game.slug) }}">Ir a la ficha</a>
+{% else %}
+
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="border border-secondary rounded-3 p-3">
+      <div class="small text-secondary">Desde</div>
+      <div class="fw-semibold">{{ analysis.quality.date_from or '—' }}</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="border border-secondary rounded-3 p-3">
+      <div class="small text-secondary">Hasta</div>
+      <div class="fw-semibold">{{ analysis.quality.date_to or '—' }}</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="border border-secondary rounded-3 p-3">
+      <div class="small text-secondary">Duplicados fecha</div>
+      <div class="fw-semibold">{{ analysis.quality.duplicate_dates }}</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="border border-secondary rounded-3 p-3">
+      <div class="small text-secondary">χ² p-value (main)</div>
+      <div class="fw-semibold">
+        {% set p = analysis.main.chi_square.p_value %}
+        {{ '%.4f'|format(p) if p is not none else 'n/d' }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-lg-8">
+    <h2 class="h5">Frecuencia principales</h2>
+    <canvas id="freqChart" height="120"></canvas>
+  </div>
+  <div class="col-lg-4">
+    <h2 class="h5">Paridad</h2>
+    <canvas id="parityChart" height="180"></canvas>
+    <ul class="small mt-3 mb-0">
+      <li>Suma media: {{ '%.1f'|format(analysis.main.sums.mean) }}</li>
+      <li>Consecutivos medios: {{ '%.2f'|format(analysis.main.consecutive.mean) }}</li>
+      <li>Solape vs anterior: {{ '%.2f'|format(analysis.main.overlap_previous.mean) }}</li>
+    </ul>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-md-6">
+    <h2 class="h5">Pares más frecuentes</h2>
+    <div class="table-responsive" style="max-height: 280px; overflow:auto;">
+      <table class="table table-sm table-dark">
+        <thead><tr><th>Par</th><th>Count</th></tr></thead>
+        <tbody>
+          {% for item in analysis.main.pairs[:15] %}
+          <tr><td class="font-monospace">{{ item.pair | join('-') }}</td><td>{{ item.count }}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <h2 class="h5">Tríos más frecuentes</h2>
+    <div class="table-responsive" style="max-height: 280px; overflow:auto;">
+      <table class="table table-sm table-dark">
+        <thead><tr><th>Trío</th><th>Count</th></tr></thead>
+        <tbody>
+          {% for item in analysis.main.triples[:12] %}
+          <tr><td class="font-monospace">{{ item.triple | join('-') }}</td><td>{{ item.count }}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% if analysis.bonus %}
+<h2 class="h5 mb-3">Bonus / especiales</h2>
+<div class="row g-3 mb-4">
+  {% for b in analysis.bonus %}
+  <div class="col-md-6">
+    <div class="border border-secondary rounded-3 p-3">
+      <h3 class="h6">{{ b.name }} ({{ b.min }}–{{ b.max }})</h3>
+      <canvas id="bonusChart{{ loop.index0 }}" height="140"></canvas>
+      <p class="small text-secondary mb-0 mt-2">
+        χ² p =
+        {% set bp = b.chi_square.p_value %}
+        {{ '%.4f'|format(bp) if bp is not none else 'n/d' }}
+      </p>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="row g-3">
+  <div class="col-md-6">
+    <h2 class="h5">Por día (descriptivo)</h2>
+    <pre class="small bg-black bg-opacity-25 p-3 rounded">{{ analysis.calendar.by_weekday | tojson(indent=2) }}</pre>
+  </div>
+  <div class="col-md-6">
+    <h2 class="h5">Por mes (descriptivo)</h2>
+    <pre class="small bg-black bg-opacity-25 p-3 rounded">{{ analysis.calendar.by_month | tojson(indent=2) }}</pre>
+  </div>
+</div>
+
+<p class="small text-secondary mt-3">
+  <a href="{{ url_for('lotteries.analysis_json', slug=game.slug) }}">Descargar JSON de análisis</a>
+</p>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{% if analysis %}
+<script>
+(() => {
+  const freq = {{ analysis.main.frequency | tojson }};
+  const labels = Object.keys(freq).map(Number).sort((a,b)=>a-b);
+  const values = labels.map(k => freq[String(k)]);
+  new Chart(document.getElementById('freqChart'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{ label: 'Frecuencia', data: values, backgroundColor: 'rgba(13,202,240,0.55)' }]
+    },
+    options: { plugins: { legend: { display: false } }, scales: { x: { ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 20 } } } }
+  });
+
+  const parity = {{ analysis.main.parity | tojson }};
+  new Chart(document.getElementById('parityChart'), {
+    type: 'doughnut',
+    data: {
+      labels: Object.keys(parity),
+      datasets: [{ data: Object.values(parity), backgroundColor: ['#0dcaf0','#6f42c1','#198754','#ffc107','#dc3545','#fd7e14'] }]
+    },
+    options: { plugins: { legend: { position: 'bottom' } } }
+  });
+
+  const bonuses = {{ analysis.bonus | tojson }};
+  bonuses.forEach((b, idx) => {
+    const el = document.getElementById('bonusChart' + idx);
+    if (!el) return;
+    const flabels = Object.keys(b.frequency).map(Number).sort((a,c)=>a-c);
+    const fvals = flabels.map(k => b.frequency[String(k)]);
+    new Chart(el, {
+      type: 'bar',
+      data: { labels: flabels, datasets: [{ label: b.name, data: fvals, backgroundColor: 'rgba(255,193,7,0.55)' }] },
+      options: { plugins: { legend: { display: false } } }
+    });
+  });
+})();
+</script>
+{% endif %}
+{% endblock %}

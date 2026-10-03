@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Experimentos · Kino Lab{% endblock %}
+{% block content %}
+<h1 class="h3">Cuaderno local</h1>
+<form method="post" class="card p-3 mb-3">
+  <div class="mb-2"><label class="form-label" for="title">Título</label><input class="form-control" id="title" name="title" required></div>
+  <div class="mb-2"><label class="form-label" for="question">Pregunta</label><input class="form-control" id="question" name="question"></div>
+  <div class="mb-2"><label class="form-label" for="hypothesis">Hipótesis</label><input class="form-control" id="hypothesis" name="hypothesis"></div>
+  <button class="btn btn-primary" type="submit">Crear experimento</button>
+</form>
+<form method="post" action="{{ url_for('lab.import_notebook') }}" enctype="multipart/form-data" class="mb-3">
+  <label class="form-label" for="file">Importar JSON versionado</label>
+  <input class="form-control" type="file" name="file" id="file" accept=".json" required>
+  <button class="btn btn-outline-light mt-2" type="submit">Validar e importar</button>
+</form>
+<table class="table table-sm">
+  <thead><tr><th>Título</th><th>Actualizado</th></tr></thead>
+  <tbody>
+    {% for r in rows %}
+    <tr><td><a href="{{ url_for('lab.notebook_detail', experiment_id=r.experiment_id) }}">{{ r.title }}</a></td><td>{{ r.updated_at }}</td></tr>
+    {% else %}
+    <tr><td colspan="2" class="text-secondary">Aún no hay experimentos.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

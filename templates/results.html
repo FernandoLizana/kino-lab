@@ -1,0 +1,844 @@
+{% extends "base.html" %}
+{% block title %}Resultados · Kino Lab{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">Resultados</h1>
+  {% if selected and rows %}
+  <a class="btn btn-outline-light" href="{{ url_for('download_results', experiment_id=selected.id) }}">Descargar CSV</a>
+  {% endif %}
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-3">
+    <div class="card p-3">
+      <h2 class="h6">Experimentos</h2>
+      <div class="list-group list-group-flush">
+        {% for e in experiments %}
+        <a class="list-group-item list-group-item-action {% if selected and e.id == selected.id %}active{% endif %}"
+           href="{{ url_for('results', id=e.id) }}">
+          #{{ e.id }} · {{ e.kind }}<br>
+          <small>{{ e.name }}</small>
+        </a>
+        {% else %}
+        <p class="text-secondary mb-0">Sin experimentos.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-9">
+    {% if not selected %}
+    <div class="alert alert-info">Selecciona un experimento.</div>
+    {% else %}
+    <div class="card p-3 mb-3">
+      <h2 class="h5 mb-1">{{ selected.name }}</h2>
+      <p class="text-secondary mb-2">
+        Tipo {{ selected.kind }} · seed {{ selected.seed }} · sample {{ selected.sample_size }}
+      </p>
+      {% if selected.kind == 'statistical_seed' %}
+      <div class="alert alert-info mb-3">
+        <strong>Semilla estadística SHA-256</strong>
+        <code class="d-block text-break mt-1">{{ metrics.get('seed_sha256', '') }}</code>
+        <small>
+          Historial usado: {{ metrics.get('draw_count', 0) }} sorteos hasta
+          {{ metrics.get('history_as_of', '—') }} · fecha del experimento
+          {{ metrics.get('experiment_date', '—') }}.
+        </small>
+      </div>
+      <div class="alert alert-warning py-2 small">
+        Esta semilla pertenece al modelo estadístico y no corresponde
+        necesariamente a la semilla real utilizada por el sorteo.
+      </div>
+      {% endif %}
+      {% if selected.kind == 'astrology' %}
+      <div class="alert alert-danger mb-3">
+        <strong>Advertencia — módulo experimental</strong><br>
+        {{ metrics.get('disclaimer', 'No demuestra causalidad ni garantiza resultados.') }}
+      </div>
+      <div class="alert alert-info mb-3">
+        <strong>Predicción calculada para el próximo sorteo:</strong>
+        {{ metrics.get('target_draw_label')
+           or (metrics.get('target_draw_date', '—') ~ ' '
+               ~ metrics.get('target_draw_time', '22:30') ~ ' '
+               ~ metrics.get('timezone', 'America/Santiago')) }}
+        <br>
+        <small>
+          Target ISO: <code>{{ metrics.get('target_draw_datetime', '—') }}</code>
+          · historial hasta {{ metrics.get('history_as_of', '—') }}
+          ({{ metrics.get('draw_count', 0) }} sorteos previos).
+        </small>
+        <br>
+        {% set freshness = metrics.get('history_freshness', 'already_current') %}
+        {% if freshness == 'updated' %}
+        <span class="badge text-bg-success">Histórico actualizado desde API</span>
+        {% elif freshness == 'api_unavailable' %}
+        <span class="badge text-bg-warning">API no disponible — se usó histórico local</span>
+        {% else %}
+        <span class="badge text-bg-secondary">Histórico local ya estaba al día</span>
+        {% endif %}
+        {% if metrics.get('remote_latest_date') %}
+        <small class="ms-1">
+          Remoto: {{ metrics.get('remote_latest_date') }}
+          {% if metrics.get('remote_latest_draw_number') %}#{{ metrics.get('remote_latest_draw_number') }}{% endif %}
+        </small>
+        {% endif %}
+        {% if metrics.get('history_sync_message') %}
+        <div class="small mt-1">{{ metrics.get('history_sync_message') }}</div>
+        {% endif %}
+        <div class="small mt-1 text-secondary">
+          Ubicación: {{ metrics.get('assumptions', {}).get('location', 'Chile') }} ·
+          lat {{ metrics.get('assumptions', {}).get('lat', '—') }},
+          lon {{ metrics.get('assumptions', {}).get('lon', '—') }}.
+        </div>
+      </div>
+      {% set sky = metrics.get('target_sky', {}) %}
+      {% set lunar = sky.get('lunar_summary', {}) %}
+      <div class="row g-2 mb-3">
+        <div class="col-md-3">
+          <div class="stat-value" style="font-size:1.25rem">{{ sky.get('moon_phase', '—') }}</div>
+          <div class="stat-label">Fase lunar (objetivo)</div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-value" style="font-size:1.25rem">{{ sky.get('moon_sign', '—') }}</div>
+          <div class="stat-label">Signo lunar</div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-value" style="font-size:1.25rem">
+            {% if lunar.get('illumination_pct') is not none %}
+              {{ "%.1f"|format(lunar.get('illumination_pct')) }}%
+            {% else %}—{% endif %}
+          </div>
+          <div class="stat-label">Iluminación lunar</div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-value" style="font-size:1.25rem">{{ "%.0f"|format((metrics.get('blend', 0) * 100)) }}%</div>
+          <div class="stat-label">Peso astrológico (fijo)</div>
+        </div>
+      </div>
+
+      {% include "_audit_notice.html" %}
+
+      {% set aw = metrics.get('adaptive_weights') or {} %}
+      {% if aw.get('channel_weights') %}
+      <h3 class="h6">Pesos por canal</h3>
+      <p class="small text-secondary mb-2">
+        Todos los canales pesan igual ({{ aw.get('channel_count', 0) }} canales) y la mezcla
+        similitud/bins es fija en {{ "%.0f"|format((aw.get('sim_weight', 0) * 100)) }}% /
+        {{ "%.0f"|format((aw.get('bin_weight', 0) * 100)) }}%.
+        La escala por canal solo compensa que unos tienen más variables que otros.
+        Antes se ponderaba por precisión histórica; se quitó porque esa precisión
+        correlacionó <strong>−0.29</strong> con el rendimiento posterior, es decir, ajustaba ruido.
+      </p>
+      <div class="table-responsive mb-3">
+        <table class="table table-sm">
+          <thead>
+            <tr><th>Canal</th><th>Variables</th><th>Peso</th></tr>
+          </thead>
+          <tbody>
+            {% for name, w in (aw.get('channel_weights') or {}).items() %}
+            <tr>
+              <td><code>{{ name }}</code></td>
+              <td>{{ (aw.get('channel_sizes') or {}).get(name, '—') }}</td>
+              <td>{{ "%.1f"|format(w * 100) }}%</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% if aw.get('bin_values_total') %}
+      <p class="small text-secondary">
+        Valores de bin con resolución suficiente:
+        <strong>{{ aw.get('bin_values_usable', 0) }}</strong> de {{ aw.get('bin_values_total', 0) }}
+        (mínimo {{ aw.get('min_draws_per_bin_value', 600) }} sorteos por valor).
+        El resto se descarta: con menos casos, una celda solo puede aportar ruido.
+      </p>
+      {% endif %}
+      {% endif %}
+
+      {% if sky.get('planets_table') %}
+      <h3 class="h6">Cielo del target — planetas</h3>
+      <p class="small text-secondary mb-2">
+        Longitud cruda solo informativa; el modelo usa sin/cos.
+        Distancia en AU (Luna también km). Estacionario si |dλ/dt| &lt;
+        {{ metrics.get('assumptions', {}).get('stationary_threshold_deg_per_day', 0.05) }} °/día.
+      </p>
+      <div class="table-responsive mb-3">
+        <table class="table table-sm align-middle">
+          <thead>
+            <tr>
+              <th>Cuerpo</th>
+              <th>Long / signo°</th>
+              <th>Lat</th>
+              <th>Decl</th>
+              <th>Vel °/d</th>
+              <th>Dist</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in sky.get('planets_table', []) %}
+            <tr>
+              <td class="text-capitalize">{{ p.body }}</td>
+              <td>
+                <code>{{ "%.2f"|format(p.longitude_deg) }}°</code>
+                <span class="text-secondary">{{ p.sign_degree }}</span>
+              </td>
+              <td>{{ "%.2f"|format(p.latitude_deg) }}°</td>
+              <td>{{ "%.2f"|format(p.declination_deg) }}°</td>
+              <td>{{ "%.3f"|format(p.speed_longitude_deg_per_day) }}</td>
+              <td>
+                {{ "%.4f"|format(p.distance_au) }} AU
+                {% if p.distance_km is not none %}
+                  <br><small>{{ "%.0f"|format(p.distance_km) }} km</small>
+                {% endif %}
+              </td>
+              <td><span class="badge text-bg-secondary">{{ p.motion_state }}</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+
+      {% if lunar %}
+      <h3 class="h6">Resumen lunar</h3>
+      <div class="table-responsive mb-3">
+        <table class="table table-sm">
+          <tbody>
+            <tr><th>Fase angular</th><td>{{ "%.2f"|format(lunar.get('phase_angle_deg', 0)) }}°</td></tr>
+            <tr><th>Iluminación</th><td>{{ "%.2f"|format(lunar.get('illumination_pct', 0)) }}%</td></tr>
+            <tr><th>Edad lunar</th><td>{{ "%.2f"|format(lunar.get('age_days', 0)) }} días</td></tr>
+            <tr><th>Distancia</th><td>{{ "%.0f"|format(lunar.get('distance_km', 0)) }} km ({{ "%.6f"|format(lunar.get('distance_au', 0)) }} AU)</td></tr>
+            <tr><th>Perigeo / apogeo</th>
+              <td>
+                {% if lunar.get('near_perigee') %}cerca de perigeo
+                {% elif lunar.get('near_apogee') %}cerca de apogeo
+                {% else %}intermedio{% endif %}
+                (índice {{ "%.2f"|format(lunar.get('apsis_index', 0)) }})
+              </td>
+            </tr>
+            <tr><th>Signo / grado</th><td>{{ lunar.get('sign_degree', '—') }}</td></tr>
+            <tr><th>Declinación</th><td>{{ "%.2f"|format(lunar.get('declination_deg', 0)) }}°</td></tr>
+            <tr><th>Creciente / menguante</th><td>{{ lunar.get('phase_label', '—') }}</td></tr>
+            <tr><th>Nodo verdadero</th>
+              <td>{{ lunar.get('true_node', {}).get('sign_degree', '—') }}
+                ({{ "%.2f"|format(lunar.get('true_node', {}).get('longitude_deg', 0)) }}°)</td>
+            </tr>
+            <tr><th>Nodo medio</th>
+              <td>{{ lunar.get('mean_node', {}).get('sign_degree', '—') }}
+                ({{ "%.2f"|format(lunar.get('mean_node', {}).get('longitude_deg', 0)) }}°)</td>
+            </tr>
+            <tr><th>Separaciones Luna→planetas</th>
+              <td class="small">
+                {% for body, sep in (lunar.get('separations_to_planets_deg') or {}).items() %}
+                  {{ body }} {{ "%.1f"|format(sep) }}°{% if not loop.last %}, {% endif %}
+                {% else %}—{% endfor %}
+              </td>
+            </tr>
+            {% set lun = lunar.get('lunations', {}) %}
+            <tr><th>Lunaciones (h firmadas)</th>
+              <td class="small">
+                nueva cercana {{ lun.get('hours_to_nearest_new_moon_signed', '—') }} h ·
+                llena cercana {{ lun.get('hours_to_nearest_full_moon_signed', '—') }} h ·
+                desde nueva {{ lun.get('hours_since_previous_new_moon', '—') }} h ·
+                hasta nueva {{ lun.get('hours_until_next_new_moon', '—') }} h ·
+                desde llena {{ lun.get('hours_since_previous_full_moon', '—') }} h ·
+                hasta llena {{ lun.get('hours_until_next_full_moon', '—') }} h
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+
+      {% if metrics.get('number_scores') %}
+      <h3 class="h6">Números con mayor puntuación astrológica</h3>
+      <div class="table-responsive mb-3">
+        <table class="table table-sm">
+          <thead><tr><th>#</th><th>Número</th><th>Score astro</th></tr></thead>
+          <tbody>
+            {% for item in metrics.get('number_scores', [])[:10] %}
+            <tr>
+              <td>{{ loop.index }}</td>
+              <td><strong>{{ item.number }}</strong></td>
+              <td>{{ "%.4f"|format(item.astro_score) }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+      {% if not metrics.get('patterns') %}
+      <h3 class="h6">Patrones walk-forward (exploratorios)</h3>
+      <div class="alert alert-secondary py-2 px-3 small mb-3">
+        Ningún patrón superó el contraste familiar por permutación. Es el resultado
+        esperado: si el sorteo es justo, no hay nada que encontrar, y las asociaciones
+        que aparecen a simple vista son el máximo de cientos de comparaciones.
+      </div>
+      {% endif %}
+      {% if metrics.get('patterns') %}
+      <h3 class="h6">Patrones walk-forward (exploratorios)</h3>
+      <p class="small text-secondary mb-2">
+        Evaluados solo con historial previo; cuentan aparición y no-aparición.
+        No implican causalidad ni cambian la equiprobabilidad teórica.
+        {% if metrics.get('pattern_method') %}
+        <br><code>{{ metrics.get('pattern_method') }}</code>
+        {% endif %}
+      </p>
+      <div class="table-responsive mb-3">
+        <table class="table table-sm align-middle">
+          <thead>
+            <tr>
+              <th>Feature</th><th>Bin</th><th>Núm</th>
+              <th>Lift</th><th>Obs%</th><th>Esp%</th>
+              <th>Soporte</th><th>Confirm.</th><th>Estab.</th><th>p</th><th>p FDR</th><th>p familiar</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in metrics.get('patterns', [])[:15] %}
+            <tr>
+              <td><code>{{ p.feature }}</code></td>
+              <td>{{ p.value }}</td>
+              <td>{{ p.number }}</td>
+              <td>{{ "%.3f"|format(p.lift|default(p.avg_lift)) }}</td>
+              <td>{{ "%.1f"|format((p.observed_rate|default(0)) * 100) }}%</td>
+              <td>{{ "%.1f"|format((p.expected_rate|default(0.56)) * 100) }}%</td>
+              <td>{{ p.support|default(p.tests) }}</td>
+              <td>{{ "%.0f"|format((p.confirmation_rate|default(0)) * 100) }}%
+                <small class="text-secondary">({{ p.confirmations }}/{{ p.confirmation_tests|default(p.tests) }})</small>
+              </td>
+              <td>{{ "%.2f"|format(p.stability) if p.stability is not none else "—" }}</td>
+              <td>{{ "%.3f"|format(p.p_value) if p.p_value is not none else "—" }}</td>
+              <td>
+                {% if p.get('p_value_adj') is not none %}
+                  {{ "%.3f"|format(p.get('p_value_adj')) }}
+                {% else %}—{% endif %}
+              </td>
+              <td>
+                {% if p.get('p_value_family_wise') is not none %}
+                  {{ "%.3f"|format(p.get('p_value_family_wise')) }}
+                {% else %}—{% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+      {% endif %}
+      {% if selected.kind == 'lunar' %}
+      <div class="alert alert-danger mb-3">
+        <strong>Advertencia — modelo lunar experimental</strong><br>
+        {{ metrics.get('disclaimer', 'No demuestra causalidad ni cambia la equiprobabilidad teórica.') }}
+      </div>
+      <div class="alert alert-info mb-3">
+        <strong>Predicción calculada para el próximo sorteo:</strong>
+        {{ metrics.get('target_draw_label')
+           or (metrics.get('target_draw_date', '—') ~ ' '
+               ~ metrics.get('target_draw_time', '22:30') ~ ' '
+               ~ metrics.get('timezone', 'America/Santiago')) }}
+        <br>
+        <small>
+          Target ISO: <code>{{ metrics.get('target_draw_datetime', '—') }}</code>
+          · historial hasta {{ metrics.get('history_as_of', '—') }}
+          ({{ metrics.get('draw_count', 0) }} sorteos previos) · mode
+          <code>{{ metrics.get('mode', 'lunar') }}</code>
+          · {{ metrics.get('feature_count', 0) }} features lunares.
+        </small>
+        <br>
+        {% set freshness = metrics.get('history_freshness', 'already_current') %}
+        {% if freshness == 'updated' %}
+        <span class="badge text-bg-success">Histórico actualizado desde API</span>
+        {% elif freshness == 'api_unavailable' %}
+        <span class="badge text-bg-warning">API no disponible — se usó histórico local</span>
+        {% else %}
+        <span class="badge text-bg-secondary">Histórico local ya estaba al día</span>
+        {% endif %}
+        {% if metrics.get('remote_latest_date') %}
+        <small class="ms-1">
+          Remoto: {{ metrics.get('remote_latest_date') }}
+          {% if metrics.get('remote_latest_draw_number') %}#{{ metrics.get('remote_latest_draw_number') }}{% endif %}
+        </small>
+        {% endif %}
+        {% if metrics.get('history_sync_message') %}
+        <div class="small mt-1">{{ metrics.get('history_sync_message') }}</div>
+        {% endif %}
+        <div class="small mt-1 text-secondary">
+          Fórmula: <code>{{ metrics.get('score_formula', 'lunar_score') }}</code>
+        </div>
+      </div>
+      {% set sky = metrics.get('target_sky', {}) %}
+      {% set lunar = sky.get('lunar_summary', {}) %}
+      <div class="row g-2 mb-3">
+        <div class="col-md-3">
+          <div class="stat-value" style="font-size:1.25rem">{{ sky.get('moon_phase', '—') }}</div>
+          <div class="stat-label">Fase lunar</div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-value" style="font-size:1.25rem">{{ sky.get('moon_sign', '—') }}</div>
+          <div class="stat-label">Signo lunar</div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-value" style="font-size:1.25rem">
+            {% if lunar.get('illumination_pct') is not none %}
+              {{ "%.1f"|format(lunar.get('illumination_pct')) }}%
+            {% else %}—{% endif %}
+          </div>
+          <div class="stat-label">Iluminación</div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-value" style="font-size:1.25rem">{{ lunar.get('phase_label', '—') }}</div>
+          <div class="stat-label">Creciente / menguante</div>
+        </div>
+      </div>
+      {% include "_audit_notice.html" %}
+
+      {% set aw = metrics.get('adaptive_weights') or {} %}
+      {% if aw.get('channel_weights') or aw.get('moon_longitude_deg') is not none %}
+      <h3 class="h6">Correlación lunar posicional</h3>
+      <p class="small text-secondary mb-2">
+        Longitud Luna {{ "%.2f"|format(aw.get('moon_longitude_deg', 0)) }}° → sector
+        {{ aw.get('moon_sector', '—') }}/25 · kernel ±{{ aw.get('kernel_bandwidth_deg', 12) }}°.
+        Los cuatro canales pesan igual (25% cada uno).
+      </p>
+      <p class="small text-secondary mb-2">
+        El acoplamiento exacto con la posición de la Luna es una decisión de diseño del
+        generador: hace que la salida dependa de forma reproducible de dónde está la Luna.
+        No es evidencia de influencia lunar. Con 2.456 sorteos repartidos en 25 sectores
+        quedan ~99 casos por sector, y para detectar algo ahí la tasa de aparición de un
+        número tendría que saltar del 56% al 80%.
+      </p>
+      {% if aw.get('channel_weights') %}
+      <div class="table-responsive mb-3">
+        <table class="table table-sm">
+          <thead>
+            <tr><th>Canal</th><th>Peso</th><th>Naturaleza</th></tr>
+          </thead>
+          <tbody>
+            {% for name, w in (aw.get('channel_weights') or {}).items() %}
+            <tr>
+              <td><code>{{ name }}</code></td>
+              <td>{{ "%.1f"|format(w * 100) }}%</td>
+              <td class="small text-secondary">
+                {% if name in ['moon_longitude_kernel', 'moon_sector'] %}
+                  acoplamiento posicional (diseño)
+                {% else %}
+                  agregado histórico
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+      {% if aw.get('bin_values_total') %}
+      <p class="small text-secondary">
+        Valores de bin con resolución suficiente:
+        <strong>{{ aw.get('bin_values_usable', 0) }}</strong> de {{ aw.get('bin_values_total', 0) }}
+        (mínimo {{ aw.get('min_draws_per_bin_value', 600) }} sorteos por valor).
+      </p>
+      {% endif %}
+      {% endif %}
+      {% if lunar %}
+      <h3 class="h6">Resumen lunar (target)</h3>
+      <div class="table-responsive mb-3">
+        <table class="table table-sm">
+          <tbody>
+            <tr><th>Fase angular</th><td>{{ "%.2f"|format(lunar.get('phase_angle_deg', 0)) }}°</td></tr>
+            <tr><th>Edad</th><td>{{ "%.2f"|format(lunar.get('age_days', 0)) }} días</td></tr>
+            <tr><th>Distancia</th><td>{{ "%.0f"|format(lunar.get('distance_km', 0)) }} km</td></tr>
+            <tr><th>Perigeo / apogeo</th>
+              <td>
+                {% if lunar.get('near_perigee') %}cerca de perigeo
+                {% elif lunar.get('near_apogee') %}cerca de apogeo
+                {% else %}intermedio{% endif %}
+                (índice {{ "%.2f"|format(lunar.get('apsis_index', 0)) }})
+              </td>
+            </tr>
+            <tr><th>Signo / grado</th><td>{{ lunar.get('sign_degree', '—') }}</td></tr>
+            <tr><th>Declinación</th><td>{{ "%.2f"|format(lunar.get('declination_deg', 0)) }}°</td></tr>
+            <tr><th>Velocidad</th><td>{{ "%.3f"|format(lunar.get('speed_longitude_deg_per_day', 0)) }} °/d</td></tr>
+            <tr><th>Nodo verdadero</th><td>{{ lunar.get('true_node', {}).get('sign_degree', '—') }}</td></tr>
+            <tr><th>Nodo medio</th><td>{{ lunar.get('mean_node', {}).get('sign_degree', '—') }}</td></tr>
+            {% set lun = lunar.get('lunations', {}) %}
+            <tr><th>Lunaciones (h)</th>
+              <td class="small">
+                nueva cercana {{ lun.get('hours_to_nearest_new_moon_signed', '—') }} ·
+                llena cercana {{ lun.get('hours_to_nearest_full_moon_signed', '—') }} ·
+                desde nueva {{ lun.get('hours_since_previous_new_moon', '—') }} ·
+                hasta nueva {{ lun.get('hours_until_next_new_moon', '—') }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+      {% if metrics.get('number_scores') %}
+      <h3 class="h6">Números con mayor <code>lunar_score</code></h3>
+      <div class="table-responsive mb-3">
+        <table class="table table-sm">
+          <thead><tr><th>#</th><th>Número</th><th>lunar_score</th></tr></thead>
+          <tbody>
+            {% for item in metrics.get('number_scores', [])[:10] %}
+            <tr>
+              <td>{{ loop.index }}</td>
+              <td><strong>{{ item.number }}</strong></td>
+              <td>{{ "%.4f"|format(item.lunar_score) }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+      {% if not metrics.get('patterns') %}
+      <h3 class="h6">Patrones lunares walk-forward (exploratorios)</h3>
+      <div class="alert alert-secondary py-2 px-3 small mb-3">
+        Ningún patrón lunar superó el contraste familiar por permutación. Es el resultado
+        esperado: las asociaciones que aparecen a simple vista son el máximo de cientos
+        de comparaciones, no una señal.
+      </div>
+      {% endif %}
+      {% if metrics.get('patterns') %}
+      <h3 class="h6">Patrones lunares walk-forward (exploratorios)</h3>
+      <p class="small text-secondary mb-2">
+        Solo bins lunares. Tests con aparición y no-aparición; sin causalidad.
+      </p>
+      <div class="table-responsive mb-3">
+        <table class="table table-sm align-middle">
+          <thead>
+            <tr>
+              <th>Feature</th><th>Bin</th><th>Núm</th>
+              <th>Lift</th><th>Obs%</th><th>Esp%</th>
+              <th>Soporte</th><th>Confirm.</th><th>Estab.</th><th>p</th><th>p FDR</th><th>p familiar</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in metrics.get('patterns', [])[:15] %}
+            <tr>
+              <td><code>{{ p.feature }}</code></td>
+              <td>{{ p.value }}</td>
+              <td>{{ p.number }}</td>
+              <td>{{ "%.3f"|format(p.lift|default(p.avg_lift)) }}</td>
+              <td>{{ "%.1f"|format((p.observed_rate|default(0)) * 100) }}%</td>
+              <td>{{ "%.1f"|format((p.expected_rate|default(0.56)) * 100) }}%</td>
+              <td>{{ p.support|default(p.tests) }}</td>
+              <td>{{ "%.0f"|format((p.confirmation_rate|default(0)) * 100) }}%
+                <small class="text-secondary">({{ p.confirmations }}/{{ p.confirmation_tests|default(p.tests) }})</small>
+              </td>
+              <td>{{ "%.2f"|format(p.stability) if p.stability is not none else "—" }}</td>
+              <td>{{ "%.3f"|format(p.p_value) if p.p_value is not none else "—" }}</td>
+              <td>
+                {% if p.get('p_value_adj') is not none %}
+                  {{ "%.3f"|format(p.get('p_value_adj')) }}
+                {% else %}—{% endif %}
+              </td>
+              <td>
+                {% if p.get('p_value_family_wise') is not none %}
+                  {{ "%.3f"|format(p.get('p_value_family_wise')) }}
+                {% else %}—{% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+      {% endif %}
+      {% if selected.kind == 'tarot' %}
+      <div class="alert alert-danger mb-3">
+        <strong>Ejercicio de sincronicidad tarot–astrología</strong><br>
+        {{ metrics.get('disclaimer', 'La tirada es una traducción del cielo, no un oráculo aleatorio.') }}
+      </div>
+      <div class="alert alert-info mb-3">
+        <strong>Tirada calculada para el próximo sorteo:</strong>
+        {{ metrics.get('target_draw_label')
+           or (metrics.get('target_draw_date', '—') ~ ' '
+               ~ metrics.get('target_draw_time', '22:30') ~ ' '
+               ~ metrics.get('timezone', 'America/Santiago')) }}
+        <br>
+        <small>
+          Target ISO: <code>{{ metrics.get('target_draw_datetime', '—') }}</code>
+          · historial hasta {{ metrics.get('history_as_of', '—') }}
+          ({{ metrics.get('draw_count', 0) }} sorteos previos)
+          · correspondencia {{ metrics.get('correspondence', 'Golden Dawn') }}.
+        </small>
+      </div>
+
+      {% include "_audit_notice.html" %}
+
+      {% set spread = metrics.get('target_spread') or {} %}
+      <div class="tarot-spread mb-3">
+        {% for key, title in [('energy', 'Energía · astrología'), ('pattern', 'Patrón · ancla tarot'), ('climate', 'Clima · fase lunar')] %}
+        {% set card = spread.get(key) or {} %}
+        <div class="tarot-card">
+          <div class="role">{{ title }}</div>
+          <div class="name">{{ card.get('name', '—') }}</div>
+          <div class="source">{{ card.get('source', '') }}</div>
+          <div class="source mt-1">{{ card.get('tradition', '') }}</div>
+        </div>
+        {% endfor %}
+      </div>
+
+      {% set sync = metrics.get('synchronicity') or {} %}
+      {% if sync %}
+      <h3 class="h6">Sincronicidad de la ancla</h3>
+      <p class="small text-secondary mb-2">
+        ¿Los sorteos que compartieron la misma carta-ancla
+        (<strong>{{ (spread.get('pattern') or {}).get('name', '—') }}</strong>)
+        se parecen más entre sí que dos sorteos al azar?
+        Jaccard observado {{ "%.3f"|format(sync.get('observed_mean_jaccard', 0)) }}
+        vs nulo {{ "%.3f"|format(sync.get('null_mean_jaccard', 0)) }}
+        (p={{ sync.get('p_value', '—') }}).
+        Dos sorteos aleatorios de 14/25 tienen Jaccard ≈
+        {{ sync.get('chance_jaccard_two_random_draws', 0.389) }}.
+      </p>
+      {% endif %}
+
+      {% if metrics.get('resolution') %}
+      <h3 class="h6">Resolución de cada carta</h3>
+      <p class="small text-secondary mb-2">
+        Con menos de {{ metrics.get('assumptions', {}).get('min_draws_per_bin_value', 600) }}
+        sorteos por valor, una carta solo puede producir ruido.
+      </p>
+      <div class="table-responsive mb-3">
+        <table class="table table-sm">
+          <thead>
+            <tr><th>Variable</th><th>Valores</th><th>n mediana</th><th>¿Usable?</th><th>Salto mín. detectable</th></tr>
+          </thead>
+          <tbody>
+            {% for row in metrics.get('resolution') %}
+            <tr>
+              <td><code>{{ row.variable }}</code></td>
+              <td>{{ row.distinct_values }}</td>
+              <td>{{ "%.0f"|format(row.median_draws_per_value) }}</td>
+              <td>{% if row.usable %}sí{% else %}no{% endif %}</td>
+              <td>
+                {% if row.min_detectable_rate_jump_pp is not none %}
+                  +{{ row.min_detectable_rate_jump_pp }} pp
+                {% else %}—{% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+
+      {% if not metrics.get('patterns') %}
+      <h3 class="h6">Patrones tarot walk-forward (exploratorios)</h3>
+      <div class="alert alert-secondary py-2 px-3 small mb-3">
+        Ningún patrón carta→número superó el contraste familiar por permutación.
+        Es el resultado esperado si no hay sincronicidad: las asociaciones que
+        aparecen a simple vista son el máximo de cientos de comparaciones.
+      </div>
+      {% endif %}
+      {% if metrics.get('patterns') %}
+      <h3 class="h6">Patrones tarot walk-forward (exploratorios)</h3>
+      <p class="small text-secondary mb-2">
+        Carta → número, evaluados solo con historial previo. No implican causalidad.
+      </p>
+      <div class="table-responsive mb-3">
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th>Feature</th><th>Carta</th><th>Núm</th>
+              <th>Lift</th><th>Obs%</th><th>Esp%</th>
+              <th>Soporte</th><th>Confirm.</th><th>Estab.</th><th>p</th><th>p FDR</th><th>p familiar</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in metrics.get('patterns', [])[:15] %}
+            <tr>
+              <td><code>{{ p.feature }}</code></td>
+              <td>{{ p.value }}</td>
+              <td>{{ p.number }}</td>
+              <td>{{ "%.3f"|format(p.lift|default(p.avg_lift)) }}</td>
+              <td>{{ "%.1f"|format((p.observed_rate|default(0)) * 100) }}%</td>
+              <td>{{ "%.1f"|format((p.expected_rate|default(0.56)) * 100) }}%</td>
+              <td>{{ p.support|default(p.tests) }}</td>
+              <td>{{ "%.0f"|format((p.confirmation_rate|default(0)) * 100) }}%
+                <small class="text-secondary">({{ p.confirmations }}/{{ p.confirmation_tests|default(p.tests) }})</small>
+              </td>
+              <td>{{ "%.2f"|format(p.stability) if p.stability is not none else "—" }}</td>
+              <td>{{ "%.3f"|format(p.p_value) if p.p_value is not none else "—" }}</td>
+              <td>
+                {% if p.get('p_value_adj') is not none %}
+                  {{ "%.3f"|format(p.get('p_value_adj')) }}
+                {% else %}—{% endif %}
+              </td>
+              <td>
+                {% if p.get('p_value_family_wise') is not none %}
+                  {{ "%.3f"|format(p.get('p_value_family_wise')) }}
+                {% else %}—{% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+      {% endif %}
+      {% if selected.kind == 'backtest' %}
+      <div class="row g-2 mb-3">
+        <div class="col-md-3"><div class="stat-value">{{ metrics.get('steps', 0) }}</div><div class="stat-label">Pruebas</div></div>
+        <div class="col-md-3"><div class="stat-value">{{ "%.2f"|format(metrics.get('model_mean_hits', 0)) }}</div><div class="stat-label">Media modelo</div></div>
+        <div class="col-md-3"><div class="stat-value">{{ "%.2f"|format(metrics.get('random_mean_hits', 0)) }}</div><div class="stat-label">Media azar</div></div>
+        <div class="col-md-3"><div class="stat-value">{{ metrics.get('model_max_hits', 0) }}</div><div class="stat-label">Máx. modelo</div></div>
+      </div>
+      <canvas id="backtestChart" height="110"></canvas>
+      {% endif %}
+    </div>
+
+    {% if rows %}
+    {% if selected.kind in ['astrology', 'lunar', 'tarot', 'color'] %}
+    {% set top_result = rows[0] %}
+    <div class="card border-warning p-3 mb-3" id="topModelCombination">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <div>
+          <div class="text-warning fw-semibold mb-1">
+            {% if selected.kind == 'lunar' %}
+            Combinación con mayor <code>lunar_score</code> del modelo experimental
+            {% elif selected.kind == 'tarot' %}
+            Combinación con mayor <code>tarot_score</code> (afinidad con la tirada del día)
+            {% elif selected.kind == 'color' %}
+            Combinación con mayor <code>color_score</code> (afinidad con el tono objetivo)
+            {% else %}
+            Combinación con mayor puntaje del modelo experimental
+            {% endif %}
+          </div>
+          <div class="fs-4">
+            <code id="topModelNumbers">{{ top_result.numbers_csv }}</code>
+          </div>
+          <div class="small text-secondary mt-2">
+            Score del modelo: {{ "%.4f"|format(top_result.score) }}.
+            Un mayor score del modelo no implica una mayor probabilidad real:
+            si el sorteo es uniforme, todas las combinaciones son equiprobables.
+          </div>
+        </div>
+        <div>
+          <button
+            class="btn btn-warning"
+            id="copyModelNumbers"
+            type="button"
+            data-numbers="{{ top_result.numbers_csv }}"
+          >
+            Copiar 14 números
+          </button>
+          <div
+            class="small mt-2 text-center"
+            id="copyModelFeedback"
+            role="status"
+            aria-live="polite"
+          ></div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    <div class="card p-3">
+      <div class="table-responsive">
+        <table class="table table-sm align-middle">
+          <thead>
+            <tr>
+              <th>Rank</th><th>Combinación</th><th>Score</th>
+              <th>P/I</th><th>Suma</th><th>Consec.</th>
+              <th>Cobertura</th><th>Similitud</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in rows %}
+            <tr>
+              <td>{{ r.rank }}</td>
+              <td><code>{{ r.numbers_csv }}</code></td>
+              <td>{{ "%.4f"|format(r.score) }}</td>
+              <td>{{ r.even_count }}/{{ r.odd_count }}</td>
+              <td>{{ r.total_sum }}</td>
+              <td>{{ r.consecutive }}</td>
+              <td>{{ "%.2f"|format(r.coverage) if r.coverage is not none else "—" }}</td>
+              <td>{{ "%.2f"|format(r.similarity) if r.similarity is not none else "—" }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% elif selected.kind != 'backtest' %}
+    <div class="alert alert-secondary">Este experimento no guardó combinaciones individuales.</div>
+    {% endif %}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% if selected and selected.kind in ['astrology', 'lunar', 'tarot', 'color'] and rows %}
+<script>
+(() => {
+  const button = document.getElementById("copyModelNumbers");
+  const feedback = document.getElementById("copyModelFeedback");
+  if (!button || !feedback) return;
+
+  const setFeedback = (message, isError = false) => {
+    feedback.textContent = message;
+    feedback.className = `small mt-2 text-center ${isError ? "text-danger" : "text-success"}`;
+  };
+
+  const fallbackCopy = (text) => {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.setAttribute("readonly", "");
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.appendChild(textarea);
+    textarea.select();
+    textarea.setSelectionRange(0, textarea.value.length);
+    const copied = document.execCommand("copy");
+    textarea.remove();
+    if (!copied) throw new Error("El navegador rechazó la copia");
+  };
+
+  button.addEventListener("click", async () => {
+    const numbers = (button.dataset.numbers || "").replaceAll("-", " ").trim();
+    if (!numbers) {
+      setFeedback("No hay números para copiar.", true);
+      return;
+    }
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(numbers);
+      } else {
+        fallbackCopy(numbers);
+      }
+      setFeedback("Copiado");
+    } catch (error) {
+      console.error("No se pudieron copiar los números", error);
+      setFeedback("No se pudo copiar. Selecciona los números manualmente.", true);
+    }
+  });
+})();
+</script>
+{% endif %}
+{% if selected and selected.kind == 'backtest' %}
+<script>
+chartDefaults();
+const modelDist = {{ metrics.get('model_distribution', {}) | tojson }};
+const randomDist = {{ metrics.get('random_distribution', {}) | tojson }};
+const labels = Array.from({length: 15}, (_, i) => String(i));
+new Chart(document.getElementById('backtestChart'), {
+  type: 'bar',
+  data: {
+    labels,
+    datasets: [
+      { label: 'Modelo', data: labels.map(k => modelDist[k] || 0), backgroundColor: '#3d8bfd' },
+      { label: 'Azar', data: labels.map(k => randomDist[k] || 0), backgroundColor: '#6c757d' }
+    ]
+  },
+  options: {
+    plugins: { title: { display: true, text: 'Distribución de aciertos (mejor del top-K)' } },
+    scales: { y: { beginAtZero: true, title: { display: true, text: 'Cantidad de pruebas' } },
+              x: { title: { display: true, text: 'Aciertos' } } }
+  }
+});
+</script>
+{% endif %}
+{% endblock %}

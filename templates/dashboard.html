@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · Kino Lab{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h1 class="h3 mb-1">Dashboard</h1>
+    <p class="text-secondary mb-0">Análisis local de combinaciones Kino (14 de 25).</p>
+  </div>
+  <div class="d-flex gap-2 flex-wrap">
+    <a class="btn btn-outline-light" href="{{ url_for('upload') }}">Cargar datos</a>
+    <a class="btn btn-outline-info" href="{{ url_for('analysis') }}">Analizar</a>
+    <a class="btn btn-primary" href="{{ url_for('backtest') }}">Backtesting</a>
+    <form method="post" action="{{ url_for('statistical_seed') }}">
+      <input type="hidden" name="sample_size" value="20000">
+      <button class="btn btn-success" type="submit">Generar semilla estadística</button>
+    </form>
+    <form method="post" action="{{ url_for('astrology_predict') }}">
+      <input type="hidden" name="sample_size" value="20000">
+      <input type="hidden" name="blend" value="0.35">
+      <button class="btn btn-warning" type="submit" title="Experimental · sin garantía">
+        Predicción astrológica experimental
+      </button>
+    </form>
+    <form method="post" action="{{ url_for('lunar_predict') }}">
+      <input type="hidden" name="sample_size" value="20000">
+      <button class="btn btn-outline-warning" type="submit" title="Solo Luna · experimental">
+        Generación lunar simple
+      </button>
+    </form>
+    <form method="post" action="{{ url_for('tarot_predict') }}">
+      <input type="hidden" name="sample_size" value="20000">
+      <button class="btn btn-outline-info" type="submit" title="Tarot anclado al cielo · ejercicio">
+        Tirada tarot–astro
+      </button>
+    </form>
+  </div>
+</div>
+
+<div class="alert alert-info py-2 small">
+  La semilla generada pertenece al modelo estadístico y no corresponde
+  necesariamente a la semilla real utilizada por el sorteo.
+</div>
+<div class="alert alert-warning py-2 small">
+  <strong>Módulo astrológico experimental:</strong> explora correlaciones históricas
+  con variables astronómicas. <em>No demuestra causalidad</em> y
+  <em>no garantiza</em> aciertos en el Kino.
+  <br>
+  Predicción calculada para el próximo sorteo:
+  <strong>{{ next_draw_label }}</strong>
+  · lat {{ default_astro_lat }}, lon {{ default_astro_lon }}.
+  Al pulsar el botón se consulta kinohistorico.cl para actualizar el histórico local.
+</div>
+<div class="alert alert-secondary py-2 small">
+  <strong>Generación lunar simple:</strong> usa solo variables de la Luna
+  (fase, distancia, nodos, lunaciones). Modelo experimental; no cambia la
+  equiprobabilidad teórica de las combinaciones.
+</div>
+<div class="alert alert-info py-2 small">
+  <strong>Tirada tarot–astro:</strong> traduce el cielo del próximo sorteo a
+  3 cartas (energía solar, ancla lunar, clima de fase) con correspondencias
+  Golden Dawn. Mide si esa ancla se sincronicó con el Kino. No se baraja:
+  la tirada es una función del cielo, no un oráculo aleatorio.
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="card p-3 h-100">
+      <div class="stat-value">{{ draw_count }}</div>
+      <div class="stat-label">Sorteos cargados</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-3 h-100">
+      <div class="stat-value">{{ last_date or "—" }}</div>
+      <div class="stat-label">Último sorteo</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-3 h-100">
+      <div class="stat-value">{{ experiment_count }}</div>
+      <div class="stat-label">Experimentos</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-3 h-100">
+      <div class="stat-value">4.457.400</div>
+      <div class="stat-label">Combinaciones posibles</div>
+    </div>
+  </div>
+</div>
+
+<div class="card p-3 mb-4">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <div>
+      <h2 class="h5 mb-1">Arco de colores</h2>
+      <p class="text-secondary small mb-0">
+        Cada combinación se pinta en el círculo cromático. No hay patrón estadístico;
+        es una forma de ver el histórico.
+      </p>
+    </div>
+    <a class="btn btn-outline-info" href="{{ url_for('colors') }}">Ver el aro</a>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="card p-3 h-100">
+      <h2 class="h5">Experimentos recientes</h2>
+      {% if experiments %}
+      <div class="table-responsive">
+        <table class="table table-sm align-middle">
+          <thead><tr><th>ID</th><th>Nombre</th><th>Tipo</th><th>Fecha</th></tr></thead>
+          <tbody>
+            {% for e in experiments %}
+            <tr>
+              <td><a href="{{ url_for('results', id=e.id) }}">#{{ e.id }}</a></td>
+              <td>{{ e.name }}</td>
+              <td><span class="badge text-bg-secondary">{{ e.kind }}</span></td>
+              <td>{{ e.created_at.strftime("%Y-%m-%d %H:%M") if e.created_at else "" }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="text-secondary mb-0">Aún no hay experimentos. Prueba puntuar o armar un portafolio.</p>
+      {% endif %}
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card p-3 h-100">
+      <h2 class="h5">Mejores resultados guardados</h2>
+      {% if best_results %}
+      <div class="table-responsive">
+        <table class="table table-sm">
+          <thead><tr><th>Score</th><th>Combinación</th></tr></thead>
+          <tbody>
+            {% for r in best_results %}
+            <tr>
+              <td>{{ "%.4f"|format(r.score) }}</td>
+              <td><code>{{ r.numbers_csv }}</code></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="text-secondary mb-0">Sin resultados todavía.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

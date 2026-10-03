@@ -1,0 +1,11 @@
+{% macro weights_fields(weights) -%}
+<div class="weights-grid mb-3">
+  {% for key, value in weights.items() %}
+  <div>
+    <label class="form-label text-capitalize">{{ key.replace('_', ' ') }}</label>
+    <input class="form-control" type="number" step="0.1" min="0" max="5"
+           name="w_{{ key }}" value="{{ value }}">
+  </div>
+  {% endfor %}
+</div>
+{%- endmacro %}

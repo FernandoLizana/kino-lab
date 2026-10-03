@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Probabilidades · Kino Lab{% endblock %}
+{% block content %}
+<h1 class="h3">Cálculo teórico</h1>
+<form class="row g-2 mb-3" method="get">
+  <div class="col-md-6">
+    <label class="form-label" for="profile">Perfil</label>
+    <select class="form-select" name="profile" id="profile" onchange="this.form.submit()">
+      {% for p in profiles %}<option value="{{ p.slug }}" {% if p.slug==profile.slug %}selected{% endif %}>{{ p.name }}</option>{% endfor %}
+    </select>
+  </div>
+</form>
+{% if error %}
+<div class="alert alert-warning">{{ error }}</div>
+{% endif %}
+{% if table %}
+<p class="text-secondary">{{ table.explanation }}</p>
+<div class="row g-3 mb-3">
+  <div class="col-md-3"><div class="card p-3"><div class="stat-value">{{ "{:,}".format(table.total_combinations) }}</div><div class="stat-label">Combinaciones C(N,r)</div></div></div>
+  <div class="col-md-3"><div class="card p-3"><div class="stat-value">{{ "%.2f"|format(table.expected_hits) }}</div><div class="stat-label">Esperanza de aciertos</div></div></div>
+  <div class="col-md-3"><div class="card p-3"><div class="stat-value">{{ table.support[0] }}–{{ table.support[1] }}</div><div class="stat-label">Soporte posible</div></div></div>
+  <div class="col-md-3"><div class="card p-3"><div class="stat-value">{{ "%.6f"|format(table.sum_check) }}</div><div class="stat-label">Suma P(X=j)</div></div></div>
+</div>
+<canvas id="pmf" height="110" aria-hidden="true"></canvas>
+<div class="table-responsive" role="region" aria-label="Probabilidades">
+  <table class="table table-sm">
+    <thead><tr><th>Aciertos</th><th>Probabilidad</th><th>%</th><th>1 entre</th></tr></thead>
+    <tbody>
+      {% for r in table.rows %}
+      <tr><td>{{ r.hits }}</td><td>{{ "%.8f"|format(r.probability) }}</td><td>{{ "%.4f"|format(r.percent) }}</td><td>{{ "{:,.1f}".format(r.one_in) }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<details>
+  <summary>Supuestos y fórmula</summary>
+  <ul>{% for a in table.assumptions %}<li>{{ a }}</li>{% endfor %}</ul>
+  <p class="small">P(X=j)=C(k,j)·C(N−k,r−j)/C(N,r). No extrapolar a juegos con orden o reposición.</p>
+</details>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+{% if table %}
+<script>
+new Chart(document.getElementById("pmf"), {
+  type: "bar",
+  data: {
+    labels: {{ table.rows|map(attribute='hits')|list|tojson }},
+    datasets: [{ label: "P(X=j)", data: {{ table.rows|map(attribute='probability')|list|tojson }}, backgroundColor: "#3d8bfd" }]
+  },
+  options: { scales: { x: { title: { display: true, text: "Aciertos" } }, y: { title: { display: true, text: "Probabilidad" } } } }
+});
+</script>
+{% endif %}
+{% endblock %}

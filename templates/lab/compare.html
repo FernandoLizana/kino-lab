@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Comparar · Kino Lab{% endblock %}
+{% block content %}
+<h1 class="h3">Comparador</h1>
+<p class="text-secondary">Mismas fechas, mismas reglas, misma cantidad de boletos. La referencia es uniforme.</p>
+<form method="post" class="card p-3 mb-3">
+  <input type="hidden" name="profile" value="{{ profile.slug }}">
+  <div class="row g-2">
+    <div class="col-md-2"><label class="form-label">Boletos</label><input class="form-control" name="tickets" type="number" value="1" min="1" max="5"></div>
+    <div class="col-md-2"><label class="form-label">Semilla</label><input class="form-control" name="seed" type="number" value="7"></div>
+    <div class="col-md-3"><label class="form-label">Holdout desde</label><input class="form-control" type="date" name="holdout"></div>
+    <div class="col-md-3"><label class="form-label">Evaluar desde</label><input class="form-control" type="date" name="cutoff"></div>
+  </div>
+  <div class="mt-2">
+    <label class="me-3"><input type="checkbox" name="strategies" value="uniform" checked> Uniforme</label>
+    <label class="me-3"><input type="checkbox" name="strategies" value="frequency" checked> Frecuencia (solo pasado)</label>
+    <label><input type="checkbox" name="strategies" value="fixed"> Fija (exploratoria)</label>
+  </div>
+  <button class="btn btn-primary mt-2" type="submit">Comparar</button>
+</form>
+{% if result %}
+<p class="small">{{ result.results.get('uniform', {}).get('warning', '') }}</p>
+<div class="table-responsive">
+  <table class="table table-sm">
+    <thead><tr><th>Estrategia</th><th>Sorteos</th><th>Media mejor acierto</th><th>Etiqueta</th></tr></thead>
+    <tbody>
+      {% for name, payload in result.results.items() %}
+      <tr>
+        <td>{{ name }}</td>
+        <td>{{ payload.evaluated }}</td>
+        <td>{{ "%.3f"|format(payload.mean_best_hits) }}</td>
+        <td>{{ payload.label }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<p class="small">Favorable y desfavorable quedan en el histograma de cada estrategia. Repetir con la misma semilla reproduce la corrida.</p>
+{% endif %}
+<h2 class="h5 mt-4">Fichas de modelos</h2>
+{% for c in cards %}
+<div class="card p-3 mb-2">
+  <strong>{{ c.name }}</strong>
+  {% if not c.available %}<span class="badge text-bg-secondary">no disponible</span>{% endif %}
+  <p class="small mb-1">{{ c.objective }} · salida: {{ c.output_type }}</p>
+  <p class="small text-secondary mb-0">{{ c.not }} {{ c.limitations }}{% if c.unavailable_reason %} {{ c.unavailable_reason }}{% endif %}</p>
+</div>
+{% endfor %}
+{% endblock %}

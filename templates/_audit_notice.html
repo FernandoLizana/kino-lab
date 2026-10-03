@@ -1,0 +1,39 @@
+{# Aviso permanente: el número que se muestra arriba viene siempre acompañado
+   de lo que ese número NO significa. Resultados de research/variable_audit.py #}
+{% set audit = metrics.get('audit_note') or {} %}
+{% if audit %}
+<div class="alert alert-warning py-2 px-3 mb-3" role="note">
+  <div class="fw-semibold mb-1">Qué significa este porcentaje</div>
+  <p class="small mb-2">
+    {{ audit.get('what_the_score_means') }}
+  </p>
+  <p class="small mb-2">
+    {{ audit.get('headline') }} {{ audit.get('detail') }}
+  </p>
+  <div class="d-flex flex-wrap gap-3 small">
+    <span>Estrategias probadas: <strong>{{ audit.get('strategies_tested') }}</strong></span>
+    <span>Predicciones fuera de muestra:
+      <strong>{{ "{:,}".format(audit.get('out_of_sample_predictions', 0)).replace(',', '.') }}</strong></span>
+    <span>Con señal real: <strong>{{ audit.get('significant_findings') }}</strong></span>
+    <span>Mejor AUC: <strong>{{ audit.get('best_auc') }}</strong>
+      (techo por azar {{ audit.get('chance_ceiling_auc') }})</span>
+  </div>
+  <div class="small mt-1 text-secondary">
+    Reproducible con <code>{{ audit.get('reproduce_with') }}</code>.
+  </div>
+</div>
+{% endif %}
+
+{% set pnull = metrics.get('pattern_null') or {} %}
+{% if pnull.get('available') %}
+<div class="small text-secondary mb-3">
+  <strong>Contraste de los patrones:</strong> se barajaron las fechas
+  {{ pnull.get('permutations') }} veces para medir qué tan grande es el mayor patrón que
+  aparece cuando por construcción no hay ninguno. Umbral por azar |z| &ge;
+  <code>{{ pnull.get('critical_abs_z') }}</code>; observado
+  <code>{{ pnull.get('observed_max_abs_z') }}</code>
+  (p familiar {{ pnull.get('family_wise_p_value') }}).
+  Solo se listan patrones que superan ese umbral, sobre
+  {{ pnull.get('cells_tested') }} celdas con soporte suficiente.
+</div>
+{% endif %}

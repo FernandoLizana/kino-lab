@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Importar · Kino Lab{% endblock %}
+{% block content %}
+<h1 class="h3">Importación guiada</h1>
+<p class="text-secondary">El archivo original no se modifica. 15 números no se recortan a 14.</p>
+<p><a href="{{ url_for('static', filename='demo/kino_moderno_sintetico.csv') }}">Plantilla / ejemplo sintético</a>
+  — si no está en static, usa <code>samples/demo/</code>.</p>
+<form method="post" enctype="multipart/form-data" class="card p-3 mb-3">
+  <label class="form-label" for="file">CSV</label>
+  <input class="form-control" type="file" name="file" id="file" accept=".csv">
+  <div class="row g-2 mt-2">
+    <div class="col-md-3">
+      <label class="form-label" for="delimiter">Separador</label>
+      <input class="form-control" id="delimiter" name="delimiter" placeholder="," >
+    </div>
+    <div class="col-md-3">
+      <label class="form-label" for="date_index">Columna fecha (0…)</label>
+      <input class="form-control" id="date_index" name="date_index" type="number" value="0">
+    </div>
+    <div class="col-md-3 d-flex align-items-end">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="has_header" id="has_header" value="1">
+        <label class="form-check-label" for="has_header">Tiene encabezado</label>
+      </div>
+    </div>
+  </div>
+  <button class="btn btn-outline-light mt-3" type="submit">Ver muestra</button>
+  <button class="btn btn-primary mt-3" type="submit" name="confirm" value="1">Confirmar filas válidas</button>
+</form>
+{% if preview %}
+<div class="card p-3 mb-3">
+  <h2 class="h6">Muestra (no importada aún)</h2>
+  <p class="small">Separador detectado: <code>{{ preview.delimiter }}</code> · filas ≈ {{ preview.row_count }} · huella {{ preview.fingerprint[:16] }}…</p>
+  <div class="table-responsive" role="region" aria-label="Vista previa">
+    <table class="table table-sm">
+      {% for row in preview.preview %}
+      <tr>{% for c in row %}<td>{{ c }}</td>{% endfor %}</tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+{% endif %}
+{% if last %}
+<p class="small">Último informe: aceptados en JSON de importación.
+  <a href="{{ url_for('lab.importer_errors') }}">Descargar exclusiones CSV</a></p>
+{% endif %}
+{% endblock %}

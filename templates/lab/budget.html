@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Gastos ficticios · Kino Lab{% endblock %}
+{% block content %}
+<h1 class="h3">Simulador de gastos (ficticio)</h1>
+<p class="text-secondary">No hay transacciones. Premios = supuestos tuyos, no tabla oficial.</p>
+<form method="post" class="card p-3 mb-3">
+  <div class="row g-2">
+    <div class="col-md-2"><label class="form-label">Costo</label><input class="form-control" name="cost" type="number" value="1000"></div>
+    <div class="col-md-2"><label class="form-label">Boletos</label><input class="form-control" name="tickets" type="number" value="2"></div>
+    <div class="col-md-2"><label class="form-label">Sorteos</label><input class="form-control" name="draws" type="number" value="52"></div>
+    <div class="col-md-2"><label class="form-label">Moneda</label><input class="form-control" name="currency" value="CLP"></div>
+    <div class="col-md-2"><label class="form-label">Premio pleno</label><input class="form-control" name="prize_{{ profile.r }}" type="number" value="1000000"></div>
+  </div>
+  <button class="btn btn-primary mt-2" type="submit">Simular presupuesto</button>
+</form>
+{% if payload %}
+<ul>
+  <li>Gasto: {{ payload.currency }} {{ payload.spend }}</li>
+  <li>Premios (1ª corrida): {{ payload.won_first_run }}</li>
+  <li>Balance: {{ payload.net_first_run }}</li>
+  <li>P(pérdida) estimada en 40 corridas: {{ "%.0f"|format(payload.p_loss_est*100) }}%</li>
+</ul>
+<p class="small">{{ payload.note }}</p>
+<table class="table table-sm"><thead><tr><th>Sorteo</th><th>Gastado</th><th>Ganado</th><th>Neto</th></tr></thead>
+<tbody>
+{% for p in payload.path %}
+<tr><td>{{ p.draw }}</td><td>{{ p.spent }}</td><td>{{ p.won }}</td><td>{{ p.net }}</td></tr>
+{% endfor %}
+</tbody></table>
+{% endif %}
+{% endblock %}

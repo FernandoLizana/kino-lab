@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Cargar CSV · Kino Lab{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Cargar historial</h1>
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="card p-4">
+      <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+        <div class="mb-3">
+          <label class="form-label">Archivo CSV</label>
+          <input class="form-control" type="file" name="file" accept=".csv" required>
+          <div class="form-text">Cada fila = un sorteo. Se detectan automáticamente las 14 columnas de números.</div>
+        </div>
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" name="replace" id="replace">
+          <label class="form-check-label" for="replace">Reemplazar todos los sorteos existentes</label>
+        </div>
+        <button class="btn btn-primary" type="submit">Subir y validar</button>
+      </form>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card p-4">
+      <h2 class="h5">Estado actual</h2>
+      <p class="mb-2">Sorteos en base de datos: <strong>{{ draw_count }}</strong></p>
+      <p class="text-secondary small mb-0">
+        Formatos aceptados: con encabezado (<code>Fecha,N1..N14</code>) o sin encabezado
+        como <code>historico.csv</code>. Filas inválidas se omiten con mensaje de error.
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+(() => {
+  const forms = document.querySelectorAll('.needs-validation');
+  Array.from(forms).forEach(form => {
+    form.addEventListener('submit', event => {
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      form.classList.add('was-validated');
+    });
+  });
+})();
+</script>
+{% endblock %}

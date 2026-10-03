@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Explorar · Kino Lab{% endblock %}
+{% block content %}
+<h1 class="h3">Datos históricos</h1>
+<p class="text-secondary">Lo que ya ocurrió en las filas filtradas. No cambia el próximo sorteo si es uniforme.</p>
+<form class="row g-2 mb-3" method="get">
+  <div class="col-md-3">
+    <label class="form-label" for="profile">Perfil</label>
+    <select class="form-select" name="profile" id="profile">
+      {% for p in profiles %}<option value="{{ p.slug }}" {% if p.slug==profile.slug %}selected{% endif %}>{{ p.name }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2"><label class="form-label" for="from">Desde</label><input class="form-control" type="date" name="from" id="from" value="{{ request.args.get('from','') }}"></div>
+  <div class="col-md-2"><label class="form-label" for="to">Hasta</label><input class="form-control" type="date" name="to" id="to" value="{{ request.args.get('to','') }}"></div>
+  <div class="col-md-2"><label class="form-label" for="number">Número</label><input class="form-control" type="number" name="number" id="number" min="1" value="{{ request.args.get('number','') }}"></div>
+  <div class="col-md-3 d-flex align-items-end gap-2">
+    <button class="btn btn-primary" type="submit">Filtrar</button>
+    <a class="btn btn-outline-light" href="{{ url_for('lab.export_explore_csv', profile=profile.slug) }}">CSV</a>
+  </div>
+</form>
+
+{% if not analysis.draw_count %}
+<div class="alert alert-info">
+  {{ analysis.empty_reason }}
+  <form class="d-inline" method="post" action="{{ url_for('lab.load_demo', kind='historico') }}">
+    <button class="btn btn-sm btn-primary" type="submit">Cargar demo</button>
+  </form>
+  o <a href="{{ url_for('lab.importer') }}">importar</a>.
+</div>
+{% else %}
+<p class="small">{{ analysis.denominator_note }} · {{ analysis.period.from }} → {{ analysis.period.to }} · esperado ≈ {{ "%.1f"|format(analysis.expected_frequency) }}</p>
+<div class="card p-3 mb-3">
+  <h2 class="h6">Frecuencia (tabla equivalente al gráfico)</h2>
+  <canvas id="freq" height="110" aria-hidden="true"></canvas>
+  <div class="table-responsive" role="region" aria-label="Frecuencias">
+    <table class="table table-sm">
+      <thead><tr><th>N</th><th>Count</th><th>Relativa</th><th>Atraso</th></tr></thead>
+      <tbody>
+        {% for r in analysis.frequency %}
+        <tr><td>{{ r.n }}</td><td>{{ r.count }}</td><td>{{ "%.3f"|format(r.relative) }}</td><td>{{ r.gap }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="card p-3">
+  <h2 class="h6">Sorteos (últimos del filtro)</h2>
+  <div class="table-responsive" role="region" aria-label="Sorteos">
+    <table class="table table-sm">
+      <thead><tr><th>Fecha</th><th>Números</th><th>Origen</th></tr></thead>
+      <tbody>
+        {% for d in analysis.draws %}
+        <tr>
+          <td>{{ d.date }}</td>
+          <td>{% for n in d.numbers %}<span class="ball">{{ n }}</span>{% endfor %}</td>
+          <td>{% if d.synthetic %}<span class="badge text-bg-warning">sintético</span>{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+{% if analysis.draw_count %}
+<script>
+const labels = {{ analysis.frequency|map(attribute='n')|list|tojson }};
+const values = {{ analysis.frequency|map(attribute='count')|list|tojson }};
+new Chart(document.getElementById("freq"), {
+  type: "bar",
+  data: { labels, datasets: [{ label: "Count", data: values, backgroundColor: "#3d8bfd" }] },
+  options: { plugins: { legend: { display: false } }, scales: { x: { title: { display: true, text: "Número" } }, y: { title: { display: true, text: "Apariciones" } } } }
+});
+</script>
+{% endif %}
+{% endblock %}

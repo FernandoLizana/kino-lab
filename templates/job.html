@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Job #{{ job.id }} · Kino Lab{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Proceso #{{ job.id }} · {{ job.kind }}</h1>
+<div class="card p-4">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <div>
+      Estado: <span id="status" class="badge text-bg-secondary">{{ job.status }}</span>
+    </div>
+    <div class="d-flex gap-2">
+      <button id="pauseBtn" class="btn btn-outline-warning btn-sm" type="button">Pausar</button>
+      <button id="cancelBtn" class="btn btn-outline-danger btn-sm" type="button">Cancelar</button>
+    </div>
+  </div>
+  <div class="progress mb-2">
+    <div id="bar" class="progress-bar progress-bar-striped progress-bar-animated"
+         role="progressbar" style="width: {{ job.progress }}%">{{ "%.0f"|format(job.progress) }}%</div>
+  </div>
+  <p id="message" class="text-secondary mb-0">{{ job.message }}</p>
+  <div id="doneLinks" class="mt-3 d-none">
+    <a class="btn btn-primary" id="resultsLink" href="{{ url_for('results') }}">Ver resultados</a>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+const jobId = {{ job.id }};
+const statusEl = document.getElementById('status');
+const bar = document.getElementById('bar');
+const message = document.getElementById('message');
+const doneLinks = document.getElementById('doneLinks');
+const resultsLink = document.getElementById('resultsLink');
+
+document.getElementById('cancelBtn').addEventListener('click', () => cancelJob(jobId));
+document.getElementById('pauseBtn')?.addEventListener('click', () => {
+  fetch(`/api/jobs/${jobId}/pause`, { method: 'POST' });
+});
+
+pollJob(jobId, {
+  onUpdate: (data) => {
+    statusEl.textContent = data.status;
+    bar.style.width = `${data.progress || 0}%`;
+    bar.textContent = `${Math.round(data.progress || 0)}%`;
+    message.textContent = data.message || '';
+  },
+  onDone: (data) => {
+    bar.classList.remove('progress-bar-animated');
+    doneLinks.classList.remove('d-none');
+    if (data.result && data.result.redirect) {
+      resultsLink.href = data.result.redirect;
+      resultsLink.textContent = data.result.mode === "color"
+        ? "Ver en el arco de colores"
+        : "Ver resultados";
+    } else if (data.result && data.result.experiment_id) {
+      resultsLink.href = `/results?id=${data.result.experiment_id}`;
+    }
+    if (data.status === 'error') {
+      statusEl.className = 'badge text-bg-danger';
+    } else if (data.status === 'cancelled') {
+      statusEl.className = 'badge text-bg-warning';
+    } else {
+      statusEl.className = 'badge text-bg-success';
+    }
+  }
+});
+</script>
+{% endblock %}

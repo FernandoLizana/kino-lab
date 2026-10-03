@@ -1,0 +1,48 @@
+# Entornos virtuales
+loteria/Lib/
+loteria/Scripts/
+loteria/Include/
+loteria/pyvenv.cfg
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+
+# Secretos y editores (nunca commitear .env)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+secrets.json
+.idea/
+.vscode/
+
+# Datos locales y artefactos
+*.log
+data/
+outputs/
+uploads/
+logs/
+*.db
+blocks/
+encoded_blocks/
+*.h5
+*.hdf5
+_probe_*.py
+experiment_*.csv
+
+# Artefactos de investigación (pueden contener rutas locales)
+research/_feature_cache.npz
+research/canvas_data.json
+research/audit_console.txt
+research/tarot_report.json
+research/color_report.json

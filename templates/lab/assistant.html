@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Asistente · Kino Lab{% endblock %}
+{% block content %}
+<h1 class="h3">Asistente local</h1>
+<p class="text-secondary">Funciona sin red ni claves. Los números salen del motor, no se inventan.</p>
+<form method="post" class="card p-3">
+  <label class="form-label" for="kind">Contexto</label>
+  <select class="form-select" id="kind" name="kind">
+    <option value="calculo_teorico">Cálculo teórico (probabilidades)</option>
+    <option value="datos_historicos">Datos históricos filtrados</option>
+    <option value="">Sin contexto numérico</option>
+  </select>
+  <label class="form-label mt-2" for="question">Pregunta</label>
+  <select class="form-select" id="question" name="question">
+    <option>¿Qué significa este gráfico?</option>
+    <option>¿Por qué cambia entre ejecuciones?</option>
+    <option>¿Qué puedo concluir de esta comparación?</option>
+    <option>¿Qué evidencia falta?</option>
+  </select>
+  <button class="btn btn-primary mt-3" type="submit">Explicar</button>
+</form>
+{% if answer %}
+<div class="alert alert-info mt-3">{{ answer.text }}</div>
+{% endif %}
+{% endblock %}
