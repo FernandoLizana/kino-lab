@@ -23,7 +23,4 @@
 | M19 | Implementado y verificado | Vendor local + loopback + backup | `static/vendor/`, `/ajustes` |
 | M20 | Implementado pendiente viewports en navegador | skip-link, foco, reduced-motion | `app.css`; viewports se comprueban en esta sesión |
 
-## Acciones externas (no automatizables aquí)
-
-- Rotar la clave histórica en el servicio de lotería (ver `docs/SEGURIDAD.md`).
-- Force-push para borrar el commit inicial: solo si lo pides por nombre.
+Este repositorio público no incluye historial previo ni credenciales.
