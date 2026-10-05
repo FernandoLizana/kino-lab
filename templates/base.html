@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}Kino Lab{% endblock %}</title>
+  <title>{% block title %}Lotería Lab{% endblock %}</title>
   <link href="{{ url_for('static', filename='vendor/bootstrap.min.css') }}" rel="stylesheet">
   <link href="{{ url_for('static', filename='css/app.css') }}" rel="stylesheet">
   <script src="{{ url_for('static', filename='vendor/chart.umd.min.js') }}"></script>
@@ -12,7 +12,7 @@
   <a class="visually-hidden-focusable btn btn-primary skip-link" href="#contenido">Saltar al contenido</a>
   <nav class="navbar navbar-expand-lg border-bottom border-secondary mb-4" aria-label="Principal">
     <div class="container">
-      <a class="navbar-brand fw-semibold" href="{{ url_for('lab.home') }}">Kino Lab</a>
+      <a class="navbar-brand fw-semibold" href="{{ url_for('lab.home') }}">Lotería Lab</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain" aria-controls="navMain" aria-expanded="false" aria-label="Abrir menú">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -60,7 +60,7 @@
             <ul class="dropdown-menu dropdown-menu-dark">
               <li><a class="dropdown-item" href="{{ url_for('dashboard') }}">Dashboard</a></li>
               <li><a class="dropdown-item" href="{{ url_for('results') }}">Resultados</a></li>
-              <li><a class="dropdown-item" href="{{ url_for('lotteries.catalog') }}">Otras loterías</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('lotteries.catalog') }}">Catálogo</a></li>
               <li><a class="dropdown-item" href="{{ url_for('lab.settings') }}">Ajustes</a></li>
             </ul>
           </li>

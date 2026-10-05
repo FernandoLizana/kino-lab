@@ -1,19 +1,18 @@
-# Kino Lab
+# Lotería Lab
 
-Laboratorio **local** para investigar el azar: históricos de Kino (y otras
-loterías), probabilidades exactas, simulaciones, comparación de estrategias y
-experimentos reproducibles.
+Laboratorio **local** para investigar loterías: históricos, probabilidades
+exactas, simulaciones, comparación de estrategias y experimentos
+reproducibles. Incluye Kino (Chile), Powerball, Mega Millions, EuroMillions,
+Loto Chile y más; cada juego es un perfil con sus propias reglas.
 
 Corre en tu máquina (Flask + SQLite en `127.0.0.1`). No pide cuenta, no envía
 telemetría y no necesita claves de IA.
 
-**Esto no predice el próximo sorteo.** Si el bombo es uniforme, cada
-combinación de Kino 14/25 tiene exactamente la misma probabilidad:
-`1 / 4.457.400`. El valor del programa es **entender** qué se puede concluir
-—y qué no— a partir de datos, fórmulas y simulaciones.
-
-El repositorio GitHub se mantiene **privado**. Cuando se publique, el mismo
-proceso de instalación sirve para cualquiera.
+**Esto no predice el próximo sorteo.** Si un bombo es uniforme, cada
+combinación válida del mismo tamaño tiene la misma probabilidad. En Kino
+14/25 eso es `1 / 4.457.400`; en otros juegos el motor usa N, k y r del
+perfil. El valor del programa es **entender** qué se puede concluir —y qué
+no— a partir de datos, fórmulas y simulaciones.
 
 ---
 
@@ -25,15 +24,15 @@ proceso de instalación sirve para cualquiera.
 | **100 % local** | CSV, SQLite, cuaderno y `.env` no salen del disco. |
 | **Honestidad estadística** | Separa histórico, cálculo teórico, simulación y experimento. No vende “chance de ganar”. |
 | **Datos trazables** | Cada importación cuenta aceptados, duplicados, conflictos y exclusiones. Los sorteos de 15 bolillas **no** se recortan a 14. |
-| **Fórmulas canónicas** | Una sola hipergeométrica. Kino: 4.457.400 combinaciones, esperanza 7,84 aciertos, mínimo 3. |
+| **Fórmulas canónicas** | Una sola hipergeométrica por perfil. Ejemplo Kino 14/25: 4.457.400 combinaciones, esperanza 7,84 aciertos, mínimo 3. |
 | **Comparar sin trampa** | Referencia uniforme, mismas fechas y boletos, walk-forward sin filtrar el futuro. |
 | **Aprender haciendo** | Desafíos, laboratorio de sesgos sintéticos y gastos ficticios (sin dinero real). |
 | **Reproducible** | Semillas, perfiles versionados, cuaderno con ejecuciones que no se sobrescriben. |
 | **Offline del núcleo** | Bootstrap y Chart.js van en `static/vendor/`. No hace falta CDN para usar la app. |
 | **Sin secretos en el código** | Claves solo en `.env` (gitignorado). Default astro = Santiago centro, no una vivienda. |
 
-Si buscas un sistema para “ganar el Kino”, esto no es eso. Si quieres un
-laboratorio claro para explorar el azar, sí.
+Si buscas un sistema para “ganar la lotería”, esto no es eso. Si quieres un
+laboratorio claro para explorar el azar en distintos juegos, sí.
 
 ---
 
@@ -55,8 +54,8 @@ Clona o copia el proyecto a **cualquier ruta**. No uses paths de otra máquina.
 ### Windows (PowerShell)
 
 ```powershell
-git clone https://github.com/FernandoLizana/kino-lab.git loteria
-cd loteria
+git clone https://github.com/FernandoLizana/loteria-lab.git loteria-lab
+cd loteria-lab
 powershell -ExecutionPolicy Bypass -File scripts\setup.ps1
 .\.venv\Scripts\Activate.ps1
 python app.py
@@ -65,8 +64,8 @@ python app.py
 ### macOS / Linux
 
 ```bash
-git clone https://github.com/FernandoLizana/kino-lab.git loteria
-cd loteria
+git clone https://github.com/FernandoLizana/loteria-lab.git loteria-lab
+cd loteria-lab
 chmod +x scripts/setup.sh
 ./scripts/setup.sh
 source .venv/bin/activate
@@ -247,6 +246,7 @@ samples/demo/          CSV sintéticos distribuibles
 docs/                  Diagnóstico, matriz M01–M20, seguridad
 tests/                 pytest
 .env.example           Plantilla sin secretos
+scrap.py               Legado; credenciales solo por env; Flask no lo llama
 ```
 
 ---
@@ -257,29 +257,40 @@ tests/                 pytest
 python -m pytest -q
 ```
 
-Última corrida en este entorno: **42 passed**.
+Última corrida en este entorno: **41 passed**.
 
 ---
 
 ## Privacidad
 
-Este repositorio publico nacio con **un solo commit**, sin historial previo.
-No incluye credenciales, RUT, GPS de vivienda ni rutas de un usuario.
+El árbol actual **no** contiene:
 
-| Que | Donde | Git |
-|-----|-------|-----|
+- tokens ni API keys
+- RUT / clave de la Polla
+- GPS de una vivienda
+- rutas `C:\Users\...`
+
+| Qué | Dónde | ¿Git? |
+|-----|-------|-------|
 | `SECRET_KEY` | `.env` | No |
+| Credenciales de `scrap.py` | `.env` | No |
 | SQLite, uploads, logs | `data/`, `uploads/`, `logs/` | No |
-| Resultados oficiales | `historico.csv` | Si (publicos) |
-| Demos | `samples/demo/` | Si (sinteticos) |
+| Resultados oficiales | `historico.csv` | Sí (públicos) |
+| Demos | `samples/demo/` | Sí (sintéticos) |
 
-Servidor: solo `127.0.0.1`. Sin telemetria.
+**Historial git:** el commit inicial todavía puede contener un RUT/clave y una
+ruta Windows. El código nuevo ya no. **Cambia esa contraseña en el servicio
+real** (esta herramienta no puede rotarla por ti). Reescribir el historial
+de `main` exige un force-push; no se hace hasta que lo pidas explícitamente.
+
+Servidor: solo `127.0.0.1`. Sin telemetría.
 
 ---
 
 ## Repositorio
 
-Publico: https://github.com/FernandoLizana/kino-lab
+- Público (historial limpio): [github.com/FernandoLizana/loteria-lab](https://github.com/FernandoLizana/loteria-lab)
+- El remoto privado original no se publica.
 
 ---
 

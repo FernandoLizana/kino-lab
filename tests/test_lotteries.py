@@ -255,7 +255,7 @@ def test_lottery_routes(client, app):
 
     home = client.get("/")
     assert home.status_code == 200
-    assert b"Otras loter" in home.data
+    assert b"Loter" in home.data and b"Cat" in home.data
 
     for slug in expected_slugs():
         resp = client.get(f"/lotteries/{slug}")
@@ -299,7 +299,7 @@ def test_lottery_routes(client, app):
 
     missing = client.get("/lotteries/no-existe", follow_redirects=True)
     assert missing.status_code == 200
-    assert b"no encontrado" in missing.data.lower() or b"Otras loter" in missing.data
+    assert b"no encontrado" in missing.data.lower() or b"Cat" in missing.data
 
 
 def test_sample_csv_valid_for_all_catalog_games():

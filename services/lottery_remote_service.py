@@ -53,7 +53,7 @@ def _fetch_soda(url: str, *, limit: int = 5000, timeout: int = 30) -> list[dict]
     offset = 0
     page = min(1000, limit)
     session = requests.Session()
-    session.headers.update({"Accept": "application/json", "User-Agent": "KinoLab-LotteryModule/1.0"})
+    session.headers.update({"Accept": "application/json", "User-Agent": "LoteriaLab-LotteryModule/1.0"})
     while offset < limit:
         params = {
             "$limit": page,

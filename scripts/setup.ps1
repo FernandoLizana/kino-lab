@@ -1,4 +1,4 @@
-# Instalacion portable de Kino Lab (Windows / PowerShell)
+# Instalacion portable de Lotería Lab (Windows / PowerShell)
 $ErrorActionPreference = "Stop"
 $Root = Split-Path -Parent $PSScriptRoot
 Set-Location $Root

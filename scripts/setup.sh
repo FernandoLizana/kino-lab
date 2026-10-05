@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Instalacion portable de Kino Lab (macOS / Linux)
+# Instalacion portable de Lotería Lab (macOS / Linux)
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"

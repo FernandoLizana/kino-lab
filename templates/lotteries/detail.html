@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% block title %}{{ game.name }} — Otras loterías{% endblock %}
+{% block title %}{{ game.name }} · Lotería Lab{% endblock %}
 {% block content %}
 <nav aria-label="breadcrumb" class="mb-3">
   <ol class="breadcrumb mb-0">
-    <li class="breadcrumb-item"><a href="{{ url_for('lotteries.catalog') }}">Otras loterías</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('lotteries.catalog') }}">Catálogo</a></li>
     <li class="breadcrumb-item active">{{ game.name }}</li>
   </ol>
 </nav>
